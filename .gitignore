@@ -1,7 +1,17 @@
+# Python
 .venv/
 __pycache__/
-instance/
-*.pyc
-.env
-celerybeat-schedule
+*.py[cod]
 
+# App data/runtime
+instance/
+*.log
+celerybeat-schedule
+celerybeat.pid
+
+# Secrets
+.env
+
+# OS / editor
+.vscode/
+.DS_Store
