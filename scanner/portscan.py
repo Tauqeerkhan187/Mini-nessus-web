@@ -1,6 +1,6 @@
 # Author: TK
 # Date: 04-03-2026
-# Purpose: code for port scanning
+# Purpose: Threaded TCP port scanner. Detects open TCP ports (network reconnaissance layer).
 
 import socket
 from concurrent.futures import ThreadPoolExecutor, as_completed
