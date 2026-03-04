@@ -1,6 +1,6 @@
 # Author: TK
 # Date: 04-03-2026
-# Purpose: modular engine for scanner
+# Purpose: advanced scan workflow. Enforces ALLOWED_CIDR, parses port profile, calls port scanner, etc.
 
 import ipaddress
 from scanner.portscan import threaded_port_scan

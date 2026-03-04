@@ -1,6 +1,6 @@
 # Author: TK
 # Date: 04-03-2026
-# Purpose: 
+# Purpose: logic for vulnerability detection. applies rules such as ssh exposed, http exposed. 
 
 def _sev_score(sev: str) -> int:
     return {"LOW": 3. "MEDIUM": 5, "HIGH": 7, "CRITICAL": 10}.get(sev, 3)
