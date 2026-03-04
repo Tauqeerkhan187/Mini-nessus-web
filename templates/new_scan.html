@@ -1,0 +1,31 @@
+<!-- Author:TK -->
+<!-- Date: 05-03-2026 -->
+<!-- Purpose: html form to submit scan, gives lab only warning -->
+
+<!doctype html>
+<html>
+    <head><title>New Scan</title></head>
+    <body>
+        <h2>New Scan</h2>
+        <p><b>Lab-only:</b> Allowed CIDR: {{allowed}}</p>
+
+        <form method="post">
+            <label>Target IP:</label><br>
+            <input name="Target" placeholder="192.168.56.102" required><br><br>
+
+            <label>Ports:</label><br>
+            <input name="ports" placeholder="22, 80, 443"><br><br>
+
+            <label>Profile:</label><br>
+            <select name="profile">
+                <option value="quick"></option>
+                <option value="full">full (1-1024)</option>
+            </select><br><br>
+
+            <button type="submit">Start Scan</button>
+        </form>
+
+        <p><a href="/">Back</a></p>
+    </body>
+</html> 
+
