@@ -1,0 +1,29 @@
+<!-- Author: TK -->
+<!-- Date: 05-03-2026 -->
+<!-- Purpose: Dashboard, show scan history -->
+
+<!doctype html>
+<html>
+    <head><title>Mini-Nessus Web</title></head>
+    <body>
+        <h2>Mini-Nessus Web</h2>
+        < a href="/scan/new">New Scan</a>
+        <hr>
+        <h3>Scan History</h3>
+        <table border="1" cellpadding="6">
+            <tr><th>ID</th><th>Target</th><th>Profile</th><th>Status</th><th>Created</th></tr>
+            {% for s in scans %}
+                <tr>
+                    <td><a href="/scan/{{s.id}}">{{s.id}}</a></td>
+                    <td>{{s.target}}</td>
+                    <td>{{s.profile}}</td>
+                    <td>{[s.status}}</td>
+                    <td>{{s.created_at}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
+
+            
+
