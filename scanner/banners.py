@@ -1,6 +1,6 @@
 # Author: TK
 # Date: 04-03-2026
-# Purpose: 
+# Purpose: banner grabbing and service detection. Connects to open ports and guesses service type.
 
 import socket
 
