@@ -54,10 +54,10 @@ def run_scan_task(self, scan_id: int):
 
                 return {"ok": True, "scan_id": scan.id, "pdf_path": pdf_path}
 
-            except Exception as e:
-                scan.status = "failed"
-                scan.error = str(e)
-                scan.finished_at = datetime.utcnow()
-                db.session.commit()
-                return {"ok": False, "error": str(e)}
+        except Exception as e:
+            scan.status = "failed"
+            scan.error = str(e)
+            scan.finished_at = datetime.utcnow()
+            db.session.commit()
+            return {"ok": False, "error": str(e)}
 
