@@ -11,14 +11,14 @@ class Scan(db.Model):
     ports = db.Column(db.String(255), nullable=False) # example "22, 80, 443"
     profile = db.Column(db.String(50), nullable=False, default="quick")
     status = db.Column(db.String(50), nullable=False, default="queued") # queued/running/done/failed
-   created_at = db.Column(db.DateTime, default=datetime.utcnow)
-   started_at = db.Column(db.DateTime, nullable=True)
-   finished_at = db.Column(db.DateTime, nullable=True)
-   error = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    started_at = db.Column(db.DateTime, nullable=True)
+    finished_at = db.Column(db.DateTime, nullable=True)
+    error = db.Column(db.Text, nullable=True)
 
-   celery_task_id = db.Column(db.String(128), nullable=True)
+    celery_task_id = db.Column(db.String(128), nullable=True)
 
-   findings = db.relationship("Finding", backref="scan", cascade="all, delete-orphan", lazy=True)
+    findings = db.relationship("Finding", backref="scan", cascade="all, delete-orphan", lazy=True)
 
 class Finding(db.Model):
     id = db.Column(db.Integer, primary_key=True)
