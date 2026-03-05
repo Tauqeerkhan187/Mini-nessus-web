@@ -3,7 +3,7 @@
 # Purpose: logic for vulnerability detection. applies rules such as ssh exposed, http exposed. 
 
 def _sev_score(sev: str) -> int:
-    return {"LOW": 3. "MEDIUM": 5, "HIGH": 7, "CRITICAL": 10}.get(sev, 3)
+    return {"LOW": 3, "MEDIUM": 5, "HIGH": 7, "CRITICAL": 10}.get(sev, 3)
 
 def build_findings(target: str, services: list[dict]) -> list[dict]:
     findings = []
@@ -18,7 +18,7 @@ def build_findings(target: str, services: list[dict]) -> list[dict]:
         if service == "ssh":
             findings.append({
                 "port": port,
-                "service": "ssh".
+                "service": "ssh",
                 "banner": banner,
                 "issue": "SSH service exposed",
                 "severity": "MEDIUM",
