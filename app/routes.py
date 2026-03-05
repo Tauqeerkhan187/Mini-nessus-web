@@ -21,7 +21,7 @@ def new_scan():
 
 @bp.post("/scan/new")
 def create_scan():
-    target = request.form.get("target". "").strip()
+    target = request.form.get("target", "").strip()
     ports = request.form.get("ports", "").strip()
     profile = request.form.get("profile", "quick").strip()
 
