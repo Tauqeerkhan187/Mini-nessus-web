@@ -1,0 +1,43 @@
+<!-- Author: TK -->
+<!-- Date: 05-03-2026 -->
+<!-- Purpose: Displays status, findings, pdf download link, auto refreshes when running. -->
+
+<!doctype html>
+<html>
+    <head>
+        <title>Scan {{scan.id}}</title>
+        {% if scan.status in ["queued", "running"] %}
+            <meta http-equiv="refresh" content="2">
+        {% endif %}
+    </head>
+    <body>
+        <h2>Scan {{scan.id}}</h2>
+        <p><b>Target:</b> {{scan.target}]</p>
+        <p><b>Status:</b> {{scan.status}}</p>
+        {% if scan.error %}
+            <p style="color:red"><b>Error:</b> {{scan.error}}</p>
+        {% endif %}
+
+        <p>
+          <a href="/scan/{{scan.id}}/pdf">Download PDF</a> |
+          <a href="/">Back</a>
+        </p>
+
+        <hr>
+        <h3>Findings</h3>
+        <table border="1" cellpadding="6">
+            <tr><th>Severity</th><th>Port</th><th>Service</th><th>Issue</th><th>Recommendation</th></tr>
+            {% for f in scan.findings %}
+              <tr>
+                  <td>{{f.severity}}</td>
+                  <td>{[f.port}}</td>
+                  <td>{{f.service}}</td>
+                  <td>{{f.issue}}</td>
+                  <td>{{f.recommendation}}</td>
+             </tr>
+
+            {% endfor %}
+        </table>
+    </body>
+</html>
+
