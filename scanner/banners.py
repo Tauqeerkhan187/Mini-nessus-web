@@ -13,10 +13,12 @@ def grab_banner(target: str, port: int) -> str:
             # SSH usually talks first; HTTP needs request.
             if port in (80, 8080, 8000, 5000, 3000, 443):
                 s.sendall(b"HEAD / HTTP/1.0\r\nHost: x\r\n\r\n")
+            
             data = s.recv(1024)
             return data.decode(errors="ignore").strip()
-        except Exception:
-            return ""
+
+    except Exception:
+        return ""
 
 def guess_service(port: int, banner: str) -> str:
     b = (banner or "").lower()
