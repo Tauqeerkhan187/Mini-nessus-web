@@ -12,13 +12,18 @@ db = SQLAlchemy()
 def create_app():
     load_dotenv()
     app = Flask(__name__, instance_relative_config=True)
+
     app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET", "dev")
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///instance/scans.db")
+
+
+    os.makedirs(app.instance_path, exist_ok=True)
+    db_path = os.path.join(app.instance_path, "scan.db")
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL". f"sqlite:///{db_path}")
+
+
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["REDIS_URL"] = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     app.config["ALLOWED_CIDR"] = os.getenv("ALLOWED_CIDR", "192.168.56.0/24")
-
-    os.makedirs(app.instance_path, exist_ok=True)
 
     db.init_app(app)
 
