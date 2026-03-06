@@ -11,7 +11,11 @@ db = SQLAlchemy()
 
 def create_app():
     load_dotenv()
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, 
+                instance_relative_config=True,
+                template_folder="../templates",
+                static_folder="../static"
+                )
 
     app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET", "dev")
 
