@@ -1,29 +1,43 @@
 # Author: TK
 # Date: 04-03-2026
-# Purpose: advanced scan workflow. Enforces ALLOWED_CIDR, parses port profile, calls port scanner, etc.
+# Purpose: validates target, run threaded port scan, grab banners on open ports, etc.
 
 import ipaddress
 from scanner.portscan import threaded_port_scan
-from scanner.banners import grab_banner, guess_service
+from scanner.banners import grab_banner, guess_service, extract_version
 from scanner.checks import build_findings
 
-COMMON_PORTS_QUICK = [22, 80, 443, 21, 25, 110, 143, 3306, 5432, 6379, 8080]
-COMMON_PORTS_FULL = list(range(1, 1025)) # light ver due to hardware restraints
+COMMON_PORTS_QUICK = [21, 22, 23. 25. 53. 80, 110, 143, 443, 993, 995, 3306, 3389, 5432, 5900, 6379, 8080, 8443]
+
+COMMON_PORTS_FULL = list(range(1, 1025)) 
 
 def _enforce_allowed(target: str, allowed_cidr: str):
+    """
+    Safety check, refuse to scan anything outside the kab network. 
+    """
+
     net = ipaddress.ip_network(allowed_cidr, strict=False)
     ip = ipaddress.ip_address(target)
     if ip not in net:
-        raise ValueError(f"Target {target} is outside allowed CIDR {allowed_cidr} (lab-only).")
+        raise ValueError(
+                f"Target {target} is outside allowed CIDR {allowed_cidr}."
+                f"This scanner is restricted to lab networks only."
+                )
 
-def _parse_ports(ports_csv: str, profile: str):
+def _parse_ports(ports_csv: str, profile: str) -> list[int]:
+    """ Parse user-provided port list or use defaults based on profile."""
+
     if ports_csv.strip():
-        return sorted({int(p.strip()) for p in ports_csv.split(",") if p.strip()})
+        return sorted({int(p.strip()) for p in ports_csv.split(",") if p.strip().isdigit()})
+
     return COMMON_PORTS_QUICK if profile == "quick" else COMMON_PORTS_FULL
 
-def run_scan(target: str, ports_csv: str, profile: str, allowed_cidr: str):
-    _enforce_allowed(target, allowed_cidr)
-    ports = _parse_ports(ports_csv, profile)
+def run_scan(target: str, ports_csv: str, profile: str, allowed_cidr: str) -> dict:
+    """ Execute a full vulnerability scan against a target."""
+
+    _enforce_allowed(target, allowed_cidr) # safety check
+
+    ports = _parse_ports(ports_csv, profile) # determines which ports to scan
 
     open_ports = threaded_port_scan(target, ports, timeout=0.6, workers=200)
 
@@ -31,9 +45,27 @@ def run_scan(target: str, ports_csv: str, profile: str, allowed_cidr: str):
     for port in open_ports:
         banner = grab_banner(target, port)
         service = guess_service(port, banner)
-        services.append({"port": port, "service": service, "banner": banner})
+        version = extract_version(service, banner)
+
+        services.append({
+            "port": port,
+            "service": service,
+            "banner": banner,
+            "version": version,
+            })
 
     findings = build_findings(target, services)
+
+    stats = {
+            "ports_scanned": len(ports),
+            "open_count": len(open_ports),
+            "finding_count": len(findings),
+            "critical_count": sum(1 for f in findings if f["severity"] == "CRITICAL"),
+            "high_count": sum(1 for f in findings if f["severity"] == "HIGH"),
+            "medium_count": sum(1 for f in findings if f["severity"] == "MEDIUM"),
+            "low_count": sum(1 for f in findings if f["severity"] == "LOW"),
+
+            }
 
     return {
             "target": target,
@@ -41,5 +73,5 @@ def run_scan(target: str, ports_csv: str, profile: str, allowed_cidr: str):
             "services": services,
             "findings": findings,
 
-        }
+           }
 
