@@ -10,7 +10,7 @@ def _check_port(target: str, port: int, timeout: float) -> int | None:
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
             soc.settimeout(timeout)
-            result = s.connect_ex((target, port))
+            result = soc.connect_ex((target, port))
             if result == 0:
                 return port
 
