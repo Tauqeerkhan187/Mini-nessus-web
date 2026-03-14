@@ -147,8 +147,8 @@ def build_pdf_report(scan, results: dict, out_path: str):
         c.setFont("Helvetica", 9)
         c.setFillColor(HexColor("#374151"))
         issue_text = f.get("issue", "")
-        # word wrap at ~9- chars
-        While issue_text:
+        # word wrap at ~90 chars
+        while issue_text:
             line = issue_text[:100]
             c.drawString(margin + 0.2 * inch, y, line)
             issue_text = issue_text[100:]
