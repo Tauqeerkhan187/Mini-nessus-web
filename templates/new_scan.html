@@ -3,29 +3,175 @@
 <!-- Purpose: html form to submit scan, gives lab only warning -->
 
 <!doctype html>
-<html>
-    <head><title>New Scan</title></head>
-    <body>
-        <h2>New Scan</h2>
-        <p><b>Lab-only:</b> Allowed CIDR: {{allowed}}</p>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Scan --- Mini-Nessus</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        <form method="post">
-            <label>Target IP:</label><br>
-            <input name="Target" placeholder="192.168.56.102" required><br><br>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;  
+            background: #0F172A;
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
 
-            <label>Ports:</label><br>
-            <input name="ports" placeholder="22, 80, 443"><br><br>
+        .header {
+            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+            border-bottom: 1px solid #334155;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-            <label>Profile:</label><br>
-            <select name="profile">
-                <option value="quick"></option>
-                <option value="full">full (1-1024)</option>
-            </select><br><br>
+        .header h1 { font-size: 1.5rem; font-weight: 700; color: #F8FAFC; }
+        .header h1 span { color: #3B82F6; }
 
-            <button type="submit">Start Scan</button>
-        </form>
+        
+        .header .lab-badge {
+            background: #7C3AED22; color: #A78BFA;
+            padding: 0.35rem 0.75rem; border-radius: 6px;
+            font-size: 0.75rem; font-weight: 600; border: 1px solid #7C3AED44;
+        }
 
-        <p><a href="/">Back</a></p>
-    </body>
-</html> 
+        .container { max-width: 600px; margin: 2rem auto; padding: 0 2rem; }
+
+        .card {
+            background: #1E293B;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .card h2 { font-size: 1.3rem; margin-bottom: 0.5rem; color: #F1F5F9; }
+
+        .cidr-note {
+            background: #7C3AED18;
+            border: 1px solid #7C3AED33;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.8rem;
+            color: #C4B5FD;
+
+        }
+        .cidr-note strong { color: #A78BFA; }
+
+        .form-group { margin-bottom: 1.25rem; }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.4rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            background: #0F172A;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #F8FAFC;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.15s; 
+
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px #3B82F622;
+
+        }
+
+        input::placeholder { color: #475569; }
+        select { cursor: pointer; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        .help-text { font-size: 0.75rem; color: #64748B; margin-top: 0.3rem; }
+
+        .btn-row { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+
+        .btn {
+            padding: 0.7rem 1.5rem; border-radius: 8px; font-size: 0.9rem;
+            font-weight: 600; text-decoration: none; border: none; cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary{ background: #3B82F6; color: #FFF; flex: 1; }
+        .btn-primary:hover {background: #2563EB; } 
+        .btn-secondary { background: #334155; color: #94A3B8; }
+        .btn-secondary:hover {background: #475569; color: #E2E8F0; }
+
+        .flash-error {
+            background: #EF444422; border: 1px solid #EF444444;
+            color: #FCA5A5; padding: 0.75rem 1rem;
+            border-radius: 8px; margin-bottom: 1rem; font-size: 0.85rem;
+
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <h2> New Vulberability Scan</h2>
+
+            <div class="cidr-note">
+                <strong>&#9888; Lab Restriction:</strong>
+                Only targets inside <code>{{ allowed }}</code> are permitted.
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="flash-error">{{ message }}</div>
+                {% endfor %}
+                {% endwith %}
+
+                <form method="post">
+                    <div class="form-group">
+                        <label for="target">Target IP Address</label>
+                        <input type="text" id="target" name="target"
+                               placeholder="192.168.56.110" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ports">Ports (optional)</label>
+                        <input type="text" id="ports" name="ports"
+                               placeholder="22,80,443,3306,8080">
+                        <div class="help-text">Comma-separated. Leave blank to use profile defaults.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profile">Scan Profile</label>
+                        <select id="profile" name="profile">
+                            <option value="quick">Quick (18 common ports)</option>
+                            <option value="full">Full (ports 1-1024)</option>
+                        </select>
+                    </div>
+
+                    <div class="btn-row">
+                        <a href="/" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Launch Scan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+</body>
+</html>
+
+        
+
+        
+    
 
