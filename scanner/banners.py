@@ -111,11 +111,11 @@ def extract_version(service: str, banner: str) -> str:
 
         }
 
-        service_patterns = patterns.get(service, [])
-        for pattern in service_patterns:
-            match = re.search(patter, banner, re.IGNORECASE)
-            if match:
-                return match.group(1).strip()
+    service_patterns = patterns.get(service, [])
+    for pattern in service_patterns:
+        match = re.search(patter, banner, re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
 
         return ""
 
