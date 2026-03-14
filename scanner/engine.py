@@ -7,7 +7,7 @@ from scanner.portscan import threaded_port_scan
 from scanner.banners import grab_banner, guess_service, extract_version
 from scanner.checks import build_findings
 
-COMMON_PORTS_QUICK = [21, 22, 23. 25. 53. 80, 110, 143, 443, 993, 995, 3306, 3389, 5432, 5900, 6379, 8080, 8443]
+COMMON_PORTS_QUICK = [21, 22, 23, 25, 53, 80, 110, 143, 443, 993, 995, 3306, 3389, 5432, 5900, 6379, 8080, 8443]
 
 COMMON_PORTS_FULL = list(range(1, 1025)) 
 
