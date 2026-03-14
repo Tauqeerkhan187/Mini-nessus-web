@@ -12,7 +12,7 @@ CVE_DATABASE = {
                 "max_affected": "7.2",
                 "CVE": "CVE-2016-6515",
                 "Severity": "HIGH",
-                "Description": "OpenSSH before 7.3 allows DoS via long passowrds when using SHA-256/SHA-512 hashing."
+                "Description": "OpenSSH before 7.3 allows DoS via long passowrds when using SHA-256/SHA-512 hashing.",
                 "fix": "Upgrade OpenSSH to 7.3 or later.",
 
             },
