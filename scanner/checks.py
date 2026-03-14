@@ -99,16 +99,16 @@ CVE_DATABASE = {
             ],
     }
 
-    # -- Severity Scoring ---
+# -- Severity Scoring ---
 
-    SEVERITY_SCORES = {
-            "CRITICAL": 10,
-            "HIGH": 7,
-            "MEDIUM": 5,
-            "LOW": 3,
-            "INFO": 1,
+SEVERITY_SCORES = {
+        "CRITICAL": 10,
+        "HIGH": 7,
+        "MEDIUM": 5,
+        "LOW": 3,
+        "INFO": 1,
 
-        }
+    }
 
 def _sev_score(severity: str) -> int:
     return SEVERITY_SCORES.get(severity.upper(), 3)
