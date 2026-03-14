@@ -79,24 +79,29 @@ def extract_version(service: str, banner: str) -> str:
             ],
 
             "http": [
-                r"(Apache/[\d.]+)",
-                r"(nginx/[\d.]+)",
-                r"(Microsoft-IIS/[\d.]+)",
-                r"(lighttpd/[\d.]+)",
+                r"(Apache/[\d.]+)",       # Apache/2.4.49
+                r"(nginx/[\d.]+)",        # nginx/1.18.0
+                r"(Microsoft-IIS/[\d.]+)",# Microsoft-IIS/10.0
+                r"(lighttpd/[\d.]+)",     # lighttpd/1.4.59
 
             ],
 
             "ftp": [
-                r"(vsFTPd\s+[\d.]+)",
-                r"(ProFTPD\s+[\d.]+)",
-                r"(Pure-FTPd)",
+                r"(vsFTPd\s+[\d.]+)",     # vsFTPd 3.0.3
+                r"(ProFTPD\s+[\d.]+)",    # ProFTPD 1.3.5
+                r"(Pure-FTPd)",           # Pure-FTPd
 
             ],
 
             "smtp": [
-                r"([\d.]+)-MariaDB",
-                r"([\d.]+)", 
+                r"(Postfix)",
+                r"(Exim\s+[\d.]+)", 
 
+            ],
+
+            "mysql": [
+                r"([\d.]+)-MariaDB",      # 10.5.12-MariaDB
+                r"[\d.]+)",               # 8.0.27
             ],
 
             "redis": [
