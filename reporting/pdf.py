@@ -89,7 +89,7 @@ def build_pdf_report(scan, results: dict, out_path: str):
         c.drawString(bar_x, y + 2, f"{sev}")
 
         # Bar
-        c.setFillColor(SEVERITY_COLORS.get(sev, HexColor("6B7280")))
+        c.setFillColor(SEVERITY_COLORS.get(sev, HexColor("#6B7280")))
         c.rect(bar_x + 1.0 * inch, y, bar_w, bar_height, fill=True, stroke=False)
 
         # Count
@@ -101,7 +101,7 @@ def build_pdf_report(scan, results: dict, out_path: str):
 
     # Detailed Findings
     y -= 0.3 * inch
-    c.setFillColor(HexColor("1E293B"))
+    c.setFillColor(HexColor("#1E293B"))
     c.setFont("Helvetica-Bold", 14)
     c.drawString(margin, y, "Detailed Findings")
     y -= 0.05 * inch
