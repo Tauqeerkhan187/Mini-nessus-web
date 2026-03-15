@@ -33,7 +33,7 @@ def create_scan():
     db.session.add(scan)
     db.session.commit()
 
-    task = run_scan.task.delay(scan.id)
+    task = run_scan_task.delay(scan.id)
     scan.celery_task_id = task.id
     db.session.commit()
 
