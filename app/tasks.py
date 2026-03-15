@@ -44,15 +44,15 @@ def run_scan_task(self, scan_id: int):
                     recommendation=f["recommendation"],
                     ))
                 
-                scan.status = "done"
-                scan.finished_at = datetime.utcnow()
-                db.session.commit()
+            scan.status = "done"
+            scan.finished_at = datetime.utcnow()
+            db.session.commit()
 
                 # Generate PDF into instance folder
-                pdf_path = f"{app.instance_path}/scan_{scan.id}.pdf"
-                build_pdf_report(scan, results, pdf_path)
+            pdf_path = f"{app.instance_path}/scan_{scan.id}.pdf"
+            build_pdf_report(scan, results, pdf_path)
 
-                return {"ok": True, "scan_id": scan.id, "pdf_path": pdf_path}
+            return {"ok": True, "scan_id": scan.id, "pdf_path": pdf_path}
 
         except Exception as e:
             import traceback
