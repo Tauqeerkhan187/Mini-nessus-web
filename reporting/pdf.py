@@ -36,9 +36,9 @@ def build_pdf_report(scan, results: dict, out_path: str):
     c.setFillColor(HexColor("#1E293B"))
     c.setFont("Helvetica", 11)
     c.drawString(margin, y, f"Target: {results['target']}")
-    y -= 0,22 * inch
+    y -= 0.22 * inch
     c.drawString(margin, y, f"Scan ID: {scan.id}   Profile: {scan.profile}   Status: {scan.status}")
-    y -= 0,22 * inch
+    y -= 0.22 * inch
     c.drawString(margin, y, f"Started: {scan.started_at or 'N/A'}  Completed: {scan.finished_at or 'N/A'}")
 
     # Executive Summary
