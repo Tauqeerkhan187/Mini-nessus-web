@@ -55,6 +55,8 @@ def run_scan_task(self, scan_id: int):
                 return {"ok": True, "scan_id": scan.id, "pdf_path": pdf_path}
 
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             scan.status = "failed"
             scan.error = str(e)
             scan.finished_at = datetime.utcnow()
