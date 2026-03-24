@@ -95,37 +95,58 @@
     </table>
 
     <script>
-        fetch("/api/dashboard")
-            .then(res => res.json())
-            .then(data => {
-                const sev = data.severity_counts || {};
-                new Chart(document.getElementById("severityChart"), {
-                    type: "pie",
-                    data: {
-                        labels: Object.keys(sev),
-                        datasets: [{
-                            data: Object.values(sev),
-                            backgroundColor: ["#2563eb", "#d97706", "#dc2626", "#7f1d1d"]
-                        }]
-                    }
-                });
+    fetch("/api/dashboard")
+        .then(res => res.json())
+        .then(data => {
+            const sev = data.severity_counts || {};
 
-                const timeline = data.scan_timeline || [];
-                new Chart(document.getElementById("timelineChart"), {
-                    type: "line",
-                    data: {
-                        labels: timeline.map(x => x.created_at),
-                        datasets: [{
-                            label: "Scans",
-                            data: timeline.map((_, i) => i + 1),
-                            borderColor: "#2563eb",
-                            fill: false,
-                            tension: 0.2
-                        }]
-                    }
-                });
+            const severityOrder = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"];
+            const severityValues = severityOrder.map(key => sev[key] || 0);
+
+            new Chart(document.getElementById("severityChart"), {
+                type: "pie",
+                data: {
+                    labels: severityOrder,
+                    datasets: [{
+                        data: severityValues,
+                        backgroundColor: [
+                            "#7f1d1d", // CRITICAL
+                            "#dc2626", // HIGH
+                            "#d97706", // MEDIUM
+                            "#2563eb", // LOW
+                            "#6b7280"  // INFO
+                        ]
+                    }]
+                }
             });
-    </script>
+
+            const timeline = data.scan_timeline || [];
+
+            new Chart(document.getElementById("timelineChart"), {
+                type: "line",
+                data: {
+                    labels: timeline.map(x => x.created_at),
+                    datasets: [{
+                        label: "Completed Scans",
+                        data: timeline.map((_, i) => i + 1),
+                        borderColor: "#2563eb",
+                        fill: false,
+                        tension: 0.25
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            precision: 0
+                        }
+                    }
+                }
+            });
+        });
+</script>
+
 </body>
 </html>
 

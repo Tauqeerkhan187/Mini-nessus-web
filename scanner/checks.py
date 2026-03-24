@@ -1,256 +1,288 @@
 # Author: TK
-# Date: 05-03-2026
-# Purpose: CVE detection and Enhanced vulnerability checks.
-# Note: This is a curated subset of CVEs for lab demonstration. real scanners use feeds from NVD.
+# Date: 24-03-2026
+# Purpose: Rule-based findings engine with CVE matching and baseline exposure checks
 
 import re
 from packaging import version as pkg_version
 
-CVE_DATABASE = {
-        "OpenSSH": [
-            {
-                "max_affected": "7.2",
-                "cve": "CVE-2016-6515",
-                "severity": "HIGH",
-                "description": "OpenSSH before 7.3 allows DoS via long passowrds when using SHA-256/SHA-512 hashing.",
-                "fix": "Upgrade OpenSSH to 7.3 or later.",
-
-            },
-            {
-                "max_affected": "7.6",
-                "cve": "CVE-2018-15473",
-                "severity": "MEDIUM",
-                "description": "OpenSSH through 7.7 allows username enumeration via timing side-channel.",
-                "fix": "Upgrade OpenSSH to 7.8 or later.",
-
-            },
-            {
-                "max_affected": "8.3",
-                "cve": "CVE-2021-28041",
-                "severity": "HIGH",
-                "description": "OpenSSH before 8.4 has a double-free in ssh-agent PKCS#11 support.",
-                "fix": "Upgrade OpenSSH to 8.4 or later.",
-
-            },
-            {
-                "max_affected": "8.9",
-                "cve": "CVE-2023-38408",
-                "severity": "CRITICAL",
-                "description": "OpenSSH before 9.3p2 has a remote code execution vulnerability in ssh-agent forwarding.",
-                "fix": "Upgrade OpenSSH to 9.3p2 or later. Disable agent forwarding if not needed.",
-
-            },
-            {
-                "max_affected": "9.7",
-                "cve": "CVE-2024-6387",
-                "severity": "CRITICAL",
-                "description": "RegreSSHion: OpenSSH before 9.8 has a signal handler race condition allowing unauthenticated RCE on glibc-based Linux.",
-                "fix": "Upgrade OpenSSH to 9.8 or later immediately.",
-
-            },
-        ],
-        "Apache": [
-            {
-                "max_affected": "2.4.49",
-                "cve": "CVE-2021-41773",
-                "severity": "CRITICAL",
-                "description": "Apache 2.4.50 insufficient fix for CVE-2021-41773, still allows path traversal and RCE.",
-                "fix": "Upgrade Apache to 2.4.51 or later.",
-
-            },
-            {
-                "max_affected": "2.4.53",
-                "cve": "CVE-2022-31813",
-                "severity": "HIGH",
-                "description": "Apache before 2.4.54 may not send X-Forwaded-* headers, allowing IP-based auth bypass.",
-                "Fix": "Upgrade Apache to 2.4.54 or later.",
-            },
-        ],
-        "nginx": [
-                {
-                    "max_affected": "1.20.0",
-                    "cve": "CVE-2021-23017",
-                    "severity": "HIGH",
-                    "description": "nginx before 1.20.1 has a DNS resolver off-by-one heap write vulnerability.",
-                    "fix": "Upgrade nginx to 1.20.1 or later.",
-
-                },
-        ],
-
-        "vsFTPd": [
-            {
-                "max_affected": "2.3.4",
-                "cve": "CVE-2011-2523",
-                "severity": "CRITICAL",
-                "description": "vsFTPd 2.3.4 contains a backdoor allowing remote command execution via :) in username.",
-                "fix": "Upgrade vsFTPd to 3.0.0 or later. Verify binary integrity.",
-
-            },
-        ],
-        "ProFTPD": [
-                {
-                    "max_affected": "1.3.5",
-                    "cve": "CVE-2015-3306",
-                    "severity": "CRITICAL",
-                    "description": "ProFTPD before 1.3.5e allows remote code execution via SITE CPFR/CPTO commands.",
-                    "fix": "Upgrade ProFTPD to 1.3.5e or later.",
-
-                },
-            ],
-    }
-
-# -- Severity Scoring ---
 
 SEVERITY_SCORES = {
-        "CRITICAL": 10,
-        "HIGH": 7,
-        "MEDIUM": 5,
-        "LOW": 3,
-        "INFO": 1,
+    "CRITICAL": 10,
+    "HIGH": 7,
+    "MEDIUM": 5,
+    "LOW": 3,
+    "INFO": 1,
+}
 
-    }
 
 def _sev_score(severity: str) -> int:
-    return SEVERITY_SCORES.get(severity.upper(), 3)
+    return SEVERITY_SCORES.get((severity or "").upper(), 3)
 
-def _parse_version(version_str: str) -> str:
-    """ Extract just the numeric version from strings like 'OpenSSH_8.9p1' or 'Apache/2.4.49'. """
-    match = re.search(r"([\d]+(?:\.[\d]+)*)", version_str)
-    if match:
-        return match.group(1)
-    return ""
 
-def _is_vulnerable(detected_version: str, max_affected: str) -> bool:
-    """ Check if detected version is <= max_affected version."""
-    try:
-        return pkg_version.parse(detected_version) <= pkg_version.parse(max_affected)
+CVE_DATABASE = {
+    "OpenSSH": [
+        {
+            "max_affected": "7.2",
+            "cve": "CVE-2016-6515",
+            "severity": "HIGH",
+            "description": "OpenSSH before 7.3 allows denial of service via long passwords when using SHA-256/SHA-512 password hashing.",
+            "fix": "Upgrade OpenSSH to 7.3 or later.",
+        },
+        {
+            "max_affected": "7.7",
+            "cve": "CVE-2018-15473",
+            "severity": "MEDIUM",
+            "description": "OpenSSH through 7.7 may allow username enumeration via timing differences.",
+            "fix": "Upgrade OpenSSH to 7.8 or later.",
+        },
+        {
+            "max_affected": "8.3",
+            "cve": "CVE-2021-28041",
+            "severity": "HIGH",
+            "description": "OpenSSH before 8.4 contains a double-free issue in ssh-agent PKCS#11 support.",
+            "fix": "Upgrade OpenSSH to 8.4 or later.",
+        },
+        {
+            "max_affected": "9.3",
+            "cve": "CVE-2023-38408",
+            "severity": "CRITICAL",
+            "description": "OpenSSH before 9.3p2 may allow code execution through ssh-agent forwarding and PKCS#11 handling.",
+            "fix": "Upgrade OpenSSH to 9.3p2 or later and disable agent forwarding unless required.",
+        },
+        {
+            "max_affected": "9.7",
+            "cve": "CVE-2024-6387",
+            "severity": "CRITICAL",
+            "description": "RegreSSHion: OpenSSH before 9.8 contains a signal handler race condition that may permit unauthenticated remote code execution on glibc-based Linux systems.",
+            "fix": "Upgrade OpenSSH to 9.8 or later immediately.",
+        },
+    ],
+    "Apache": [
+        {
+            "max_affected": "2.4.49",
+            "cve": "CVE-2021-41773",
+            "severity": "CRITICAL",
+            "description": "Apache HTTP Server 2.4.49 is vulnerable to path traversal and possible remote code execution.",
+            "fix": "Upgrade Apache to 2.4.51 or later.",
+        },
+        {
+            "max_affected": "2.4.50",
+            "cve": "CVE-2021-42013",
+            "severity": "CRITICAL",
+            "description": "Apache HTTP Server 2.4.50 is vulnerable to path traversal and possible remote code execution due to an incomplete fix for CVE-2021-41773.",
+            "fix": "Upgrade Apache to 2.4.51 or later.",
+        },
+        {
+            "max_affected": "2.4.53",
+            "cve": "CVE-2022-31813",
+            "severity": "HIGH",
+            "description": "Apache before 2.4.54 may improperly forward X-Forwarded-* headers, which can contribute to access-control bypass in some deployments.",
+            "fix": "Upgrade Apache to 2.4.54 or later.",
+        },
+    ],
+    "nginx": [
+        {
+            "max_affected": "1.20.0",
+            "cve": "CVE-2021-23017",
+            "severity": "HIGH",
+            "description": "nginx before 1.20.1 contains a DNS resolver off-by-one heap write vulnerability.",
+            "fix": "Upgrade nginx to 1.20.1 or later.",
+        },
+    ],
+    "vsFTPd": [
+        {
+            "max_affected": "2.3.4",
+            "cve": "CVE-2011-2523",
+            "severity": "CRITICAL",
+            "description": "vsFTPd 2.3.4 contains a malicious backdoor allowing remote command execution.",
+            "fix": "Upgrade vsFTPd and verify binary integrity.",
+        },
+    ],
+    "ProFTPD": [
+        {
+            "max_affected": "1.3.5",
+            "cve": "CVE-2015-3306",
+            "severity": "CRITICAL",
+            "description": "ProFTPD before 1.3.5e may allow remote code execution via SITE CPFR/CPTO.",
+            "fix": "Upgrade ProFTPD to 1.3.5e or later.",
+        },
+    ],
+    "Redis": [
+        {
+            "max_affected": "999.999.999",
+            "cve": None,
+            "severity": "CRITICAL",
+            "description": "Redis exposed to the network is commonly exploitable if unauthenticated or weakly protected.",
+            "fix": "Bind Redis to localhost or a trusted interface only. Enable authentication and firewall restrictions.",
+        },
+    ],
+    "MySQL": [
+        {
+            "max_affected": "999.999.999",
+            "cve": None,
+            "severity": "HIGH",
+            "description": "MySQL exposed to the network increases attack surface and risk of brute-force or misconfiguration abuse.",
+            "fix": "Restrict MySQL to trusted hosts only, use strong authentication, and limit exposure with firewall rules.",
+        },
+    ],
+}
 
-    except Exception:
-        return False
 
-def _match_software(version_string: str) -> tuple[str, str]:
+BASELINE_RULES = {
+    "ssh": {
+        "severity": "MEDIUM",
+        "issue": "SSH service exposed to network",
+        "recommendation": "Restrict SSH access to trusted admin subnets, disable password authentication where possible, and enforce key-based login.",
+    },
+    "http": {
+        "severity": "LOW",
+        "issue": "HTTP service exposed",
+        "recommendation": "Enforce HTTPS where appropriate, remove default pages, restrict admin panels, and keep the web server patched.",
+    },
+    "ftp": {
+        "severity": "HIGH",
+        "issue": "FTP service exposed (plaintext protocol)",
+        "recommendation": "Replace FTP with SFTP/SCP or enforce FTPS if FTP is unavoidable.",
+    },
+    "telnet": {
+        "severity": "CRITICAL",
+        "issue": "Telnet service exposed (plaintext credentials and session data)",
+        "recommendation": "Disable Telnet immediately and replace it with SSH.",
+    },
+    "mysql": {
+        "severity": "HIGH",
+        "issue": "MySQL service exposed to network",
+        "recommendation": "Restrict MySQL access to trusted systems only and enforce firewall restrictions.",
+    },
+    "postgres": {
+        "severity": "HIGH",
+        "issue": "PostgreSQL service exposed to network",
+        "recommendation": "Restrict PostgreSQL access to trusted systems only and enforce firewall restrictions.",
+    },
+    "redis": {
+        "severity": "CRITICAL",
+        "issue": "Redis service exposed to network",
+        "recommendation": "Bind Redis to localhost or a trusted interface only, enable authentication, and restrict access with firewall rules.",
+    },
+}
+
+
+def _parse_numeric_version(version_string: str) -> str:
+    if not version_string:
+        return ""
+    match = re.search(r"(\d+(?:\.\d+)+)", version_string)
+    return match.group(1) if match else ""
+
+
+def _match_vendor(version_string: str) -> tuple[str, str]:
     """
-    Given a version string like 'OpenSSh_8.9p1' or 'Apache/2.4.49',
-    return (software_name, numeric_ver).
+    Return (vendor_name, numeric_version) if the banner/version matches
+    something in the local CVE database.
     """
+    if not version_string:
+        return "", ""
 
-    version_lower = version_string.lower()
+    lowered = version_string.lower()
 
-    for software_name in CVE_DATABASE:
-        if software_name.lower() in version_lower:
-            numeric = _parse_version(version_string)
-            return software_name, numeric
+    for vendor_name in CVE_DATABASE:
+        if vendor_name.lower() in lowered:
+            return vendor_name, _parse_numeric_version(version_string)
 
     return "", ""
 
-# MAIN CHECK ENGINE
 
-def build_findings(target: str, services: list[dict]) -> list[dict]:
-    """
-    Analyze discovered services and produce vulnerability findings.
+def _version_is_affected(detected_version: str, max_affected: str) -> bool:
+    try:
+        return pkg_version.parse(detected_version) <= pkg_version.parse(max_affected)
+    except Exception:
+        return False
 
-    Each service dict has: port, service, banner, version
 
-    Returns list of findings sorted by severity (worst first).
+def _make_finding(
+    *,
+    port: int | None,
+    service: str | None,
+    banner: str | None,
+    version: str | None,
+    issue: str,
+    severity: str,
+    recommendation: str,
+    cve: str | None = None,
+) -> dict:
+    return {
+        "port": port,
+        "service": service,
+        "banner": banner or "",
+        "version": version or "",
+        "cve": cve,
+        "issue": issue,
+        "severity": severity,
+        "recommendation": recommendation,
+    }
 
-    """
+
+def _apply_baseline_rule(service: str, port: int, banner: str, version: str) -> list[dict]:
+    rule = BASELINE_RULES.get(service)
+    if not rule:
+        return []
+
+    return [
+        _make_finding(
+            port=port,
+            service=service,
+            banner=banner,
+            version=version,
+            issue=rule["issue"],
+            severity=rule["severity"],
+            recommendation=rule["recommendation"],
+            cve=None,
+        )
+    ]
+
+
+def _apply_cve_rules(service: str, port: int, banner: str, version: str) -> list[dict]:
     findings = []
 
-    for svc in services:
-        port = svc["port"]
-        service = svc["service"]
-        banner = svc.get("banner", "")
-        version_str = svc.get("version", "")
+    vendor_name, numeric_version = _match_vendor(version)
+    if not vendor_name or not numeric_version:
+        return findings
 
-        # CVE-based checks
-        if version_str:
-            software, numeric_ver = _match_software(version_str)
+    for entry in CVE_DATABASE.get(vendor_name, []):
+        if _version_is_affected(numeric_version, entry["max_affected"]):
+            issue_text = entry["description"]
+            if entry.get("cve"):
+                issue_text = f"{entry['cve']}: {issue_text}"
 
-            if software and numeric_ver:
-                cve_entries = CVE_DATABASE.get(software, [])
-
-                for entry in cve_entries:
-                    if _is_vulnerable(numeric_ver, entry["max_affected"]):
-                        findings.append({
-                            "port": port,
-                            "service": service,
-                            "banner": banner,
-                            "version": version_str,
-                            "cve": entry.get("cve", ""),
-                            "issue": f"{entry.get('cve', 'UNKNOWN')}: {entry.get('description', '')[:120]}",
-                            "severity": entry["severity"],
-                            "recommendation": entry["fix"],
-
-                        })
-
-        # Service exposure checks (baseline findings)
-        if service == "ssh":
-            findings.append({
-                "port": port,
-                "service": "ssh",
-                "banner": banner,
-                "version": version_str,
-                "cve": None,
-                "issue": "SSH service exposed to network",
-                "severity": "MEDIUM",
-                "recommendation": "Restrict SSH access to admin subnet. Disable password auth and enforce key-based login. Use fail2ban."
-
-            })
-
-        elif service == "http":
-            findings.append({
-                "port": port,
-                "service": "http",
-                "banner": banner,
-                "version": version_str,
-                "cve": None,
-                "issue": "HTTP service exposed",
-                "severity": "LOW",
-                "recommendation": "Enforce HTTPS/TLS. Remove default pages. Restrict admin panels. Keep web server patched.",
-
-                })  
-
-        elif service == "ftp":
-            findings.append({
-                "port": port,
-                "service": "ftp",
-                "banner": banner,
-                "version": version_str,
-                "cve": None,
-                "issue": "FTP service exposed (unencrpyted file transfer protocol)",
-                "severity": "HIGH",
-                "recommendation": "Replace FTP with SFTP or SCP. If FTP is required, enforce TLS (FTPS) and restrict access.",
-
-            })
-
-        elif service == "telnet":
-            findings.append({
-                "port": port,
-                "service": "telnet",
-                "banner": banner,
-                "version": version_str,
-                "cve": None,
-                "issue": "Telnet service exposed (sends credentials in plaintext)",
-                    "severity": "CRITICAL",
-                    "recommendation": "Disable Telnet immediately. Use SSH for remote access.",
-            })
-
-        elif service in ("mysql", "postgres", "redis"):
-            findings.append({
-                "port": port,
-                "service": service,
-                "banner": banner,
-                "version": version_str,
-                "cve": None,
-                "issue": f"{service.upper()} database service exposed to network",
-                "severity": "HIGH",
-                "recommendation": f"Bind {service} to localhost only. Enforce authentication. Restrict access via firewall rules.",
-            })
-
-    # Sort: Highest severity first, then by port
-    findings.sort(key=lambda f: (-_sev_score(f["severity"]), f.get("port", 0)))
+            findings.append(
+                _make_finding(
+                    port=port,
+                    service=service,
+                    banner=banner,
+                    version=version,
+                    issue=issue_text,
+                    severity=entry["severity"],
+                    recommendation=entry["fix"],
+                    cve=entry.get("cve"),
+                )
+            )
 
     return findings
 
 
+def build_findings(target: str, services: list[dict]) -> list[dict]:
+    findings: list[dict] = []
 
+    for svc in services:
+        port = svc.get("port")
+        service = (svc.get("service") or "").lower()
+        banner = svc.get("banner", "")
+        version = svc.get("version", "")
+
+        # 1. Baseline exposure findings
+        findings.extend(_apply_baseline_rule(service, port, banner, version))
+
+        # 2. Version/CVE findings
+        findings.extend(_apply_cve_rules(service, port, banner, version))
+
+    findings.sort(key=lambda f: (-_sev_score(f["severity"]), f.get("port") or 0))
+    return findings

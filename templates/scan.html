@@ -1,238 +1,109 @@
-<!-- Author: TK -->
-<!-- Date: 05-03-2026 -->
-<!-- Purpose: Displays status, findings, pdf download link, auto refreshes when running. -->
-
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scan #{{ scan.id }} --- Mini-Nessus</title>
+    <title>Scan {{ scan.id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f5f7fa;
+        }
+
+        .badge {
+            padding: 6px 10px;
+            border-radius: 6px;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .LOW { background: #2563eb; }
+        .MEDIUM { background: #d97706; }
+        .HIGH { background: #dc2626; }
+        .CRITICAL { background: #7f1d1d; }
+        .INFO { background: #6b7280; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #111827;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        a.button {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 15px;
+            margin-right: 10px;
+        }
+
+        .meta {
+            margin-bottom: 20px;
+        }
+    </style>
     {% if scan.status in ["queued", "running"] %}
     <meta http-equiv="refresh" content="3">
     {% endif %}
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #0F172A;
-            color: #E2E8F0; 
-            min-height: 100vh;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
-            border-bottom: 1px solid #334155;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-        }
-
-        .header h1 { font-size: 1.5rem; font-weight: 700; color: #F8FAFC; }
-        .header h1 span { color: #3B82F6; }
-
-        .header .lab-badge {
-            background: #7C3AED22; color: #A78BFA;
-            padding: 0.35rem 0.75rem; border-radius: 6px;
-            font-size: 0.75rem; font-weight: 600; border: 1px solid #7C3AED44;
-
-        }
-
-        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
-
-        .info-card {
-            background: #1E293B;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 1.5rem 2rem;
-            margin-bottom: 1.5rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .info-card .meta { font-size: 0.85rem; color: #94A3B8; }
-        .info-card .meta strong { color: #F1F5F9; }
-        .info-card .meta code { color: #60A5FA; font-size: 1rem; }
-
-        .status-big {
-            display: inline-block;
-            padding: 0.35rem 0.9rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-
-        }
-        .status-done { background: #22C55E22; color: #4ADE80; border: 1px solid #22C55E44; }
-        .status-running { background: #3B82F622; color: #60A5FA; border: 1px solid #3B82F644; animation: pulse 1.5s infinite; }
-        .status-queued { background: #A78BFA22; color: #C4B5FD; border: 1px solid #A78BFA44; }
-        .status-failed { background: #EF444422; color: #FCA5A5; border: 1px solid #EF444444; }
-
-        @keyframes pulse {0% 100% { opacity: 1; } 50% { opacity: 0.6; } }
-
-        .actions {display: flex; gap: 0.5rem; }
-
-        .btn{
-            padding: 0.55rem 1rem; border-radius: 8px; font-size: 0.8 rem;
-            font-weight: 600.; text-decoration: none; border: none; cursor: pointer; transition: background 0.15s;
-        }
-        .btn-pdf { background: #22C55E; color: #FFF; }
-        .btn-pdf:hover { background: #16A34A; }
-        .btn-back { background: #334155; color: #94A3B8; }
-        .btn-back:hover { background: #475569; color: #E2E8F0; }
-
-        .error-banner {
-            background: #EF444418; border: 1px solid #EF444444;
-            border-radius: 8px; padding: 0.85rem 1rem;
-            margin-bottom: 1.5rem; color: #FCA5A5; font-size: 0.85rem;
-        }
-
-        .running-msg {
-            text-align: center; padding: 3rem 1rem;
-            color: #60A5FA; font-size: 1rem;
-        }
-
-        .spinner {
-            display: inline-block; width: 24px; height: 24px;
-            border: 3px solid #334155; border-top-color: #3B82F6;
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-            vertical-align: middle; margin-right: 0.5rem;
-
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .section-title {
-            font-size: 1.15rem; font-weight: 700; color: #F1F5F9;
-            margin-bottom: 1rem; padding-bottom: 0.5rem;
-            border-bottom: 2px solid #334155;
-        }
-
-        .finding {
-            background: #1E293B;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 0.75rem;
-            border-left: 4px solid #334155;
-            transition: border-color 0.15s;
-        }
-        .finding:hover { border-color: #475569; }
-
-        .finding.sev-CRITICAL { border-left-color: #DC2626; }
-        .finding.sev-HIGH     { border-left-color: #EA580C; }
-        .finding.sev-MEDIUM   { border-left-color: #CA8A04; }
-        .finding.sev-LOW      { border-left-color: #3B82F6; }
-
-        .finding-header {
-            display: flex; align-items: center;
-            gap: 0.6rem; margin-bottom: 0.5rem; flex-wrap: wrap;
-        }
-
-        .sev-badge {
-            padding: 0.15rem 0.5rem; border-radius: 4px;
-            font-size: 0.7rem; font-weight: 700; color: #FFF;
-        }
-        .sev-badge.CRITICAL { background: #DC2626; }
-        .sev-badge.HIGH     { background: #EA580C; }
-        .sev-badge.MEDIUM    { background: #CA8A04; }
-        .sev-badge.LOW      { background: #2563EB; }
-
-        .cve-tag {
-            background: #7C3AED22; color: #C4B5FD; border: 1px solid #7C3AED44;
-            padding: 0.1rem 0.45rem; border-radius: 4px;
-            font-size: 0.7rem; font-weight: 600; font-family: monospace;
-        }
-
-        .finding-port { color: #94A3B8; font-size: 0.8rem; }
-
-        .finding-issue {
-            color: #CBD5E1; font-size: 0.85rem;
-            margin-bottom: 0.4rem; line-height: 1.5;
-        }
-
-        .finding-fix {
-            background: #065F4612; border: 1px solid #065F4633;
-            border-radius: 6px; padding: 0.6rem 0.8rem;
-            font-size: 0.8rem; color: #6EE7B7; line-height: 1.4;
-        }
-        .finding-fix strong { color: #34D399; }
-
-        .no-findings{
-            text-align: center; padding: 2rem;
-            color: #64748B; font-size: 0.9rem;
-        }
-
-        .footer {
-            text-align: center; padding: 2rem;
-            color: #475569; font-size: 0.75rem;
-        }
-    </style>
 </head>
 <body>
+    <h1>Scan {{ scan.id }}</h1>
 
-    <div class="header">
-        <h1>&#9881; Mini-Nessus <span>Web</span></h1>
-        <div class="lab-badge">&#128274; LAB ONLY</div>
+    <div class="meta">
+        <p><strong>Target:</strong> {{ scan.target }}</p>
+        <p><strong>Status:</strong> {{ scan.status }}</p>
+        <p><strong>Profile:</strong> {{ scan.profile }}</p>
+        <p><strong>Created:</strong> {{ scan.created_at }}</p>
     </div>
 
-    <div class="container">
-        
-        <div class="info-card">
-            <div class="meta">
-                <div><strong>Scan #{{ scan.id }}</strong></div>
-                <div>Target: <code>{{ scan.target }}</code></div>
-                <div>Profile {{ scan.profile }} | Ports: {{ scan.ports or 'default' }}</div>
-            </div>
-            <div class="meta">
-                <div>Created: {{ scan.created_at.strftime('%Y-%m-%d %H:%M') if scan.created_at else 'N/A' }}</div>
-                <div>Finished: {{ scan.finished_at.strftime('%Y-%m-%d %H:%M') if scan.finished_at else '-' }}</div>
-                <div style="margin-top:0.3rem">
-                    <span class="status-big status-{{ scan.status }}">{{ scan.status | upper }}</span>
-                </div>
-            </div>
-            <div class="Actions">
-                <a href="/scan/{{ scan.id }}/pdf" class="btn btn-pdf">PDF Report</a>
-                <a href="/" class="btn btn-back">Dashboard</a>
-            </div>
-        </div>
+    <a class="button" href="/scan/{{ scan.id }}/pdf">Download PDF Report</a>
+    <a class="button" href="/">Back to Dashboard</a>
 
-            {% if scan.error %}
-            <div class="error-banner">
-                <strong>Error:</strong> {{scan.error }}
-            </div>
-            {% endif %}
+    <h2>Findings</h2>
 
-            {% if scan.status == "done" %}
-            <div class="section-title">Findings ({{ scan.findings | length }})</div>
-
-            {% if scan.findings %}
-                {% for f in scan.findings %}
-                <div class="finding sev-{{ f.severity }}">
-                    <div class="finding-header">
-                        <span class="sev-badge {{ f.severity }}">{{ f.severity }}</span>
-                        {% if 'CVE-' in (f.issue or '') %}
-                            <span class="cve-tag">{{ f.issue.split(':')[0] }}</span>
-                        {% endif %}
-                        <span class="finding-port">Port {{ f.port }} / {{ f.service }}</span>
-                    </div>
-                    <div class="finding-issue">{{ f.issue }}</div>
-                    <div class="finding-fix">
-                        <strong>Remediation:</strong> {{ f.recommendation }}
-                    </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="no-findings">No findings for this scan.</div>
-            {% endif %}
-            {% endif %}
-
-        </div>
-
-        <div class="footer">Mini-Nessus Web &mdash; Lab-only vulnerability scanner &mdash; Educational use only</div>
-
+    <table>
+        <tr>
+            <th>Severity</th>
+            <th>Port</th>
+            <th>Service</th>
+            <th>Version</th>
+            <th>CVE</th>
+            <th>Issue</th>
+            <th>Recommendation</th>
+        </tr>
+        {% for f in scan.findings %}
+        <tr>
+            <td><span class="badge {{ f.severity }}">{{ f.severity }}</span></td>
+            <td>{{ f.port }}</td>
+            <td>{{ f.service }}</td>
+            <td>{{ f.version or "-" }}</td>
+            <td>{{ f.cve or "-" }}</td>
+            <td>{{ f.issue }}</td>
+            <td>{{ f.recommendation }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
