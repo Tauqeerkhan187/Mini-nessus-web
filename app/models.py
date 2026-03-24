@@ -20,7 +20,7 @@ class Scan(db.Model):
 
     ssh_user = db.Column(db.String(100), nullable=True)
 
-    ssh_pass = db.Column(db.String(255), nullable=True)
+    auth_enabled = db.Column(db.Boolean, default=False)
 
     findings = db.relationship("Finding", backref="scan", cascade="all, delete-orphan", lazy=True)
 
@@ -31,9 +31,11 @@ class Finding(db.Model):
     port = db.Column(db.Integer, nullable=True)
     service = db.Column(db.String(100), nullable=True)
     banner = db.Column(db.Text, nullable=True)
+    version = db.Column(db.String(100), nullable=True)
 
     issue = db.Column(db.String(255), nullable=False)
     severity = db.Column(db.String(20), nullable=False) # LOW/MEDIUM/HIGH/CRITICAL
     recommendation = db.Column(db.Text, nullable=False)
+    cve = db.Column(db.String(100), nullable=True)
 
 
