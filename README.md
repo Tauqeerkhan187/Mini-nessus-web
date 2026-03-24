@@ -1,6 +1,3 @@
-Here’s a clean, professional README you can drop straight into your repo. No fluff, but strong enough to impress recruiters and actually explain what you built.
-
----
 
 # 🛡️ Mini Nessus Web Scanner
 
