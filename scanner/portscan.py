@@ -19,13 +19,13 @@ def _check_port(target: str, port: int, timeout: float) -> int | None:
     except Exception:
         return None
 
-def threaded_port_scan(target: str, ports: list[int], timeout: float = 0.6, workers: int = 200, progress_callback = None,) -> list[int]:
+def threaded_port_scan(target: str, ports: list[int], timeout: float = 0.6, workers: int = 200,) -> list[int]:
     """
     Scan multiple ports in parallel using a thread pool.
     """
     open_ports = []
+
     total = len(ports)
-    scanned = 0
 
     with ThreadPoolExecutor(max_workers=min(workers, total)) as executor:
         # Submit all port checks at once.
@@ -36,15 +36,10 @@ def threaded_port_scan(target: str, ports: list[int], timeout: float = 0.6, work
 
         # Collect results as they complete
         for future in as_completed(future_to_port):
-            scanned += 1
             result = future.result()
-
             if result is not None:
                 open_ports.append(result)
 
-            # Report progress if callback provided
-            if progress_callback and scanned % 50 == 0:
-                progress_callback(scanned, total)
 
     return sorted(open_ports)
 
