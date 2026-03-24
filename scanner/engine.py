@@ -72,6 +72,7 @@ def run_scan(target: str, ports_csv: str, profile: str, allowed_cidr: str) -> di
             "open_ports": open_ports,
             "services": services,
             "findings": findings,
+            "stats": stats,
 
            }
 
