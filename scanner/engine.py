@@ -6,6 +6,7 @@ import ipaddress
 from scanner.portscan import threaded_port_scan
 from scanner.banners import grab_banner, guess_service, extract_version
 from scanner.checks import build_findings
+from scanner.ssh_checks import run_authenticated_checks
 
 COMMON_PORTS_QUICK = [21, 22, 23, 25, 53, 80, 110, 143, 443, 993, 995, 3306, 3389, 5432, 5900, 6379, 8080, 8443]
 
@@ -55,6 +56,20 @@ def run_scan(target: str, ports_csv: str, profile: str, allowed_cidr: str) -> di
             })
 
     findings = build_findings(target, services)
+
+    # Authenticated checks (only if creds provided)
+    if ssh_username:
+        auth_findings = run_authenticated_checks(
+                target=target,
+                port=22,
+                username=ssh_username,
+                password=ssh_password,
+            )
+
+            findings.extend(auth_findings)
+
+    # re-sort after adding auth findings
+    findings.sort(key=lambda f: (-_sev_score(f["severity"]), f.get("port", 0)))
 
     stats = {
             "ports_scanned": len(ports),
