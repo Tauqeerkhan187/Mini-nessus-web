@@ -194,6 +194,11 @@
                     <span class="status-big status-{{ scan.status }}">{{ scan.status | upper }}</span>
                 </div>
             </div>
+            <div class="Actions">
+                <a href="/scan/{{ scan.id }}/pdf" class="btn btn-pdf">PDF Report</a>
+                <a href="/" class="btn btn-back">Dashboard</a>
+            </div>
+        </div>
 
             {% if scan.error %}
             <div class="error-banner">
