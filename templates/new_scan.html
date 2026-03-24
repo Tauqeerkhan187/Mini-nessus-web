@@ -160,6 +160,20 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="ssh_user">SSH Username (optional)</label>
+                        <input type="text" id="ssh_user" name="ssh_user"
+                               placeholder="trk_187" autocomplete="off">
+                        <div class="help-text">Leave blank to skip authenticated checks.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ssh_pass">SSH Password</label>
+                        <input type="password" id="ssh_pass" name="ssh_pass"
+                               placeholder="password" autocomplete="off">
+                    </div>
+
+
                     <div class="btn-row">
                         <a href="/" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Launch Scan</button>

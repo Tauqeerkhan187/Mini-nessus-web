@@ -65,9 +65,10 @@ def run_scan(target: str, ports_csv: str, profile: str, allowed_cidr: str, ssh_u
                 port=22,
                 username=ssh_username,
                 password=ssh_password,
-            )
 
-            findings.extend(auth_findings)
+                )
+
+        findings.extend(auth_findings)
 
     # re-sort after adding auth findings
     findings.sort(key=lambda f: (-_sev_score(f["severity"]), f.get("port", 0)))

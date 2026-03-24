@@ -29,6 +29,8 @@ def run_scan_task(self, scan_id: int):
                     ports_csv=scan.ports,
                     profile=scan.profile,
                     allowed_cidr=app.config["ALLOWED_CIDR"],
+                    ssh_username=scan.ssh_user or "",
+                    ssh_password=scan.ssh_pass or "",
                     )
 
             # Store findings
