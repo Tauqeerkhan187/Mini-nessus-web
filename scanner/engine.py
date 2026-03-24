@@ -15,7 +15,10 @@ COMMON_PORTS_QUICK = [
     3306, 3389, 5432, 5900, 6379, 8080, 8443
 ]
 
-COMMON_PORTS_FULL = list(range(1, 1025))
+COMMON_PORTS_FULL = sorted(set(
+    list(range(1, 1025)) +
+    [1433, 1521, 3306, 3389, 5432, 5601, 5900, 6379, 8080, 8443, 9200, 27017]
+))
 
 
 def _enforce_allowed(target: str, allowed_cidr: str) -> None:
