@@ -18,6 +18,10 @@ class Scan(db.Model):
 
     celery_task_id = db.Column(db.String(128), nullable=True)
 
+    ssh_user = db.Column(db.String(100), nullable=True)
+
+    ssh_pass = db.Column(db.String(255), nullable=True)
+
     findings = db.relationship("Finding", backref="scan", cascade="all, delete-orphan", lazy=True)
 
 class Finding(db.Model):

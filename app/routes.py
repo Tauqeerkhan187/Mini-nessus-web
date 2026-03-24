@@ -29,7 +29,11 @@ def create_scan():
         flash("Target is required.", "error")
         return redirect(url_for("main.new_scan"))
 
-    scan = Scan(target=target, ports=ports or "", profile=profile, status="queued")
+    ssh_user = request.form.get("ssh_user", "").strip()
+    ssh_pass = request.form.get("ssh_pass", "").strip()
+
+    scan = Scan(target=target, ports=ports or "", profile=profile, status="queued", ssh_user=ssh_user, ssh_pass=ssh_pass)
+
     db.session.add(scan)
     db.session.commit()
 
