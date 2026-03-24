@@ -11,7 +11,7 @@ from scanner.engine import run_scan
 from reporting.pdf import build_pdf_report
 
 @celery.task(bind=True)
-def run_scan_task(self, scan_id: int):
+def run_scan_task(self, scan_id: int, ssh_user: str | None = None, ssh_pass: str | None = None):
     app = create_app()
     with app.app_context():
         scan = db.session.get(Scan, scan_id)
@@ -41,9 +41,11 @@ def run_scan_task(self, scan_id: int):
                     port=f.get("port"),
                     service=f.get("service"),
                     banner=f.get("banner"),
+                    version=f.get("version"),
                     issue=f["issue"],
                     severity=f["severity"],
                     recommendation=f["recommendation"],
+                    cve=f.get("cve"),
                     ))
                 
             scan.status = "done"
