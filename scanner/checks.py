@@ -176,8 +176,8 @@ def build_findings(target: str, services: list[dict]) -> list[dict]:
                             "service": service,
                             "banner": banner,
                             "version": version_str,
-                            "cve": entry["cve"],
-                            "issue": f"{entry['cve']}: {entry['description'][:120]}",
+                            "cve": entry.get["cve", ""],
+                            "issue": f"{entry.get('cve', 'UNKNOWN')}: {entry.get('description', '')[:120]}",
                             "severity": entry["severity"],
                             "recommendation": entry["fix"],
 

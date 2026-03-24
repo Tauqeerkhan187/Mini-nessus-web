@@ -14,14 +14,14 @@ def grab_banner(target: str, port: int) -> str:
 
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
-            s.settimeout(2.0)
-            s.connect((target, port))
+            soc.settimeout(2.0)
+            soc.connect((target, port))
 
             # SSH usually talks first; HTTP needs request.
             if port in (80, 443, 8080, 8000, 8443, 5000, 3000, 8888):
-                s.sendall(b"HEAD / HTTP/1.0\r\nHost: x\r\n\r\n")
+                soc.sendall(b"HEAD / HTTP/1.0\r\nHost: x\r\n\r\n")
             
-            data = s.recv(2048)
+            data = soc.recv(2048)
             return data.decode(errors="ignore").strip()
 
     except Exception:
@@ -102,7 +102,7 @@ def extract_version(service: str, banner: str) -> str:
 
             "mysql": [
                 r"([\d.]+)-MariaDB",      # 10.5.12-MariaDB
-                r"[\d.]+)",               # 8.0.27
+                r"([\d.]+)",               # 8.0.27
             ],
 
             "redis": [
@@ -114,10 +114,10 @@ def extract_version(service: str, banner: str) -> str:
 
     service_patterns = patterns.get(service, [])
     for pattern in service_patterns:
-        match = re.search(patter, banner, re.IGNORECASE)
+        match = re.search(pattern, banner, re.IGNORECASE)
         if match:
             return match.group(1).strip()
 
-        return ""
+    return ""
 
 
