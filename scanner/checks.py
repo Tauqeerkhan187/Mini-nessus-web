@@ -10,41 +10,41 @@ CVE_DATABASE = {
         "OpenSSH": [
             {
                 "max_affected": "7.2",
-                "CVE": "CVE-2016-6515",
-                "Severity": "HIGH",
-                "Description": "OpenSSH before 7.3 allows DoS via long passowrds when using SHA-256/SHA-512 hashing.",
+                "cve": "CVE-2016-6515",
+                "severity": "HIGH",
+                "description": "OpenSSH before 7.3 allows DoS via long passowrds when using SHA-256/SHA-512 hashing.",
                 "fix": "Upgrade OpenSSH to 7.3 or later.",
 
             },
             {
                 "max_affected": "7.6",
-                "CVE": "CVE-2018-15473",
-                "Severity": "MEDIUM",
-                "Description": "OpenSSH through 7.7 allows username enumeration via timing side-channel.",
+                "cve": "CVE-2018-15473",
+                "severity": "MEDIUM",
+                "description": "OpenSSH through 7.7 allows username enumeration via timing side-channel.",
                 "fix": "Upgrade OpenSSH to 7.8 or later.",
 
             },
             {
                 "max_affected": "8.3",
-                "CVE": "CVE-2021-28041",
-                "Severity": "HIGH",
-                "Description": "OpenSSH before 8.4 has a double-free in ssh-agent PKCS#11 support.",
+                "cve": "CVE-2021-28041",
+                "severity": "HIGH",
+                "description": "OpenSSH before 8.4 has a double-free in ssh-agent PKCS#11 support.",
                 "fix": "Upgrade OpenSSH to 8.4 or later.",
 
             },
             {
                 "max_affected": "8.9",
-                "CVE": "CVE-2023-38408",
-                "Severity": "CRITICAL",
-                "Description": "OpenSSH before 9.3p2 has a remote code execution vulnerability in ssh-agent forwarding.",
+                "cve": "CVE-2023-38408",
+                "severity": "CRITICAL",
+                "description": "OpenSSH before 9.3p2 has a remote code execution vulnerability in ssh-agent forwarding.",
                 "fix": "Upgrade OpenSSH to 9.3p2 or later. Disable agent forwarding if not needed.",
 
             },
             {
                 "max_affected": "9.7",
-                "CVE": "CVE-2024-6387",
-                "Severity": "CRITICAL",
-                "Description": "RegreSSHion: OpenSSH before 9.8 has a signal handler race condition allowing unauthenticated RCE on glibc-based Linux.",
+                "cve": "CVE-2024-6387",
+                "severity": "CRITICAL",
+                "description": "RegreSSHion: OpenSSH before 9.8 has a signal handler race condition allowing unauthenticated RCE on glibc-based Linux.",
                 "fix": "Upgrade OpenSSH to 9.8 or later immediately.",
 
             },
@@ -52,26 +52,26 @@ CVE_DATABASE = {
         "Apache": [
             {
                 "max_affected": "2.4.49",
-                "CVE": "CVE-2021-41773",
-                "Severity": "CRITICAL",
-                "Description": "Apache 2.4.50 insufficient fix for CVE-2021-41773, still allows path traversal and RCE.",
+                "cve": "CVE-2021-41773",
+                "severity": "CRITICAL",
+                "description": "Apache 2.4.50 insufficient fix for CVE-2021-41773, still allows path traversal and RCE.",
                 "fix": "Upgrade Apache to 2.4.51 or later.",
 
             },
             {
                 "max_affected": "2.4.53",
-                "CVE": "CVE-2022-31813",
-                "Severity": "HIGH",
-                "Description": "Apache before 2.4.54 may not send X-Forwaded-* headers, allowing IP-based auth bypass.",
+                "cve": "CVE-2022-31813",
+                "severity": "HIGH",
+                "description": "Apache before 2.4.54 may not send X-Forwaded-* headers, allowing IP-based auth bypass.",
                 "Fix": "Upgrade Apache to 2.4.54 or later.",
             },
         ],
         "nginx": [
                 {
                     "max_affected": "1.20.0",
-                    "CVE": "CVE-2021-23017",
-                    "Severity": "HIGH",
-                    "Description": "nginx before 1.20.1 has a DNS resolver off-by-one heap write vulnerability.",
+                    "cve": "CVE-2021-23017",
+                    "severity": "HIGH",
+                    "description": "nginx before 1.20.1 has a DNS resolver off-by-one heap write vulnerability.",
                     "fix": "Upgrade nginx to 1.20.1 or later.",
 
                 },
@@ -80,9 +80,9 @@ CVE_DATABASE = {
         "vsFTPd": [
             {
                 "max_affected": "2.3.4",
-                "CVE": "CVE-2011-2523",
-                "Severity": "CRITICAL",
-                "Description": "vsFTPd 2.3.4 contains a backdoor allowing remote command execution via :) in username.",
+                "cve": "CVE-2011-2523",
+                "severity": "CRITICAL",
+                "description": "vsFTPd 2.3.4 contains a backdoor allowing remote command execution via :) in username.",
                 "fix": "Upgrade vsFTPd to 3.0.0 or later. Verify binary integrity.",
 
             },
@@ -90,9 +90,9 @@ CVE_DATABASE = {
         "ProFTPD": [
                 {
                     "max_affected": "1.3.5",
-                    "CVE": "CVE-2015-3306",
-                    "Severity": "CRITICAL",
-                    "Description": "ProFTPD before 1.3.5e allows remote code execution via SITE CPFR/CPTO commands.",
+                    "cve": "CVE-2015-3306",
+                    "severity": "CRITICAL",
+                    "description": "ProFTPD before 1.3.5e allows remote code execution via SITE CPFR/CPTO commands.",
                     "fix": "Upgrade ProFTPD to 1.3.5e or later.",
 
                 },
@@ -176,7 +176,7 @@ def build_findings(target: str, services: list[dict]) -> list[dict]:
                             "service": service,
                             "banner": banner,
                             "version": version_str,
-                            "cve": entry.get["cve", ""],
+                            "cve": entry.get("cve", ""),
                             "issue": f"{entry.get('cve', 'UNKNOWN')}: {entry.get('description', '')[:120]}",
                             "severity": entry["severity"],
                             "recommendation": entry["fix"],
