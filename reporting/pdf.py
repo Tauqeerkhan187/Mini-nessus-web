@@ -40,9 +40,9 @@ def build_pdf_report(scan, results: dict, out_path: str):
     c.drawString(margin, y, f"Scan ID: {scan.id}   Profile: {scan.profile}   Status: {scan.status}")
     y -= 0.22 * inch
     c.drawString(margin, y, f"Started: {scan.started_at or 'N/A'}  Completed: {scan.finished_at or 'N/A'}")
-
+    y-= 0.28 * inch
     c.drawString(margin, y, f"Risk Score: {scan.risk_score or 0}")
-    y -= 0.2 * inch
+    y -= 0.28 * inch
     c.drawString(margin, y, f"Risk Level: {scan.risk_level or 'LOW'}")
 
     # Executive Summary
@@ -61,7 +61,7 @@ def build_pdf_report(scan, results: dict, out_path: str):
     open_ports = results.get("open_ports", [])
 
     summary_lines = [
-            f"Ports scanned: {stats.get('ports_scanned', 'N/A')}",
+            f"Open ports detected: {stats.get('ports_scanned', 'N/A')}",
             f"Open ports found: {len(open_ports)} ({', '.join(map(str, open_ports)) if open_ports else 'None'})",
             f"Total findings: {stats.get('finding_count', 0)}",
             "",
