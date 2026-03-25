@@ -120,15 +120,25 @@ def build_pdf_report(scan, results: dict, out_path: str):
             c.showPage()
             y = h - 1 * inch
 
-        sev = f.get("severity", "LOW")
+        sev = f.get("severity") or "LOW").strip().upper()
         sev_color = SEVERITY_COLORS.get(sev, HexColor("#6B7280"))
+
+        sev_label_map = {
+                "CRITICAL": "Critical",
+                "HIGH": "HIGH",
+                "MEDIUM": "MEDIUM",
+                "LOW": "LOW",
+                "INFO": "INFO",
+                }   
+
+        sev_label = sev_label_map.get(sev, sev)
 
         # Severity badge
         c.setFillColor(sev_color)
         c.roundRect(margin, y - 3, 65, 16, 3, fill=True, stroke=False)
         c.setFillColor(HexColor("#FFFFFF"))
         c.setFont("Helvetica-Bold", 8)
-        c.drawCentredString(margin + 32.5, y + 1, sev)
+        c.drawCentredString(margin + 32.5, y + 1, sev_label)
 
         # Finding title
         c.setFillColor(HexColor("#1E293B"))
