@@ -18,6 +18,20 @@ SEVERITY_SCORES = {
 def _sev_score(severity: str) -> int:
     return SEVERITY_SCORES.get((severity or "").upper(), 3)
 
+def calculate_risk_score(findings: list[dict]) -> tuple[int, str]:
+    score = sum(_sev_score(f.get("severity", "")) for f in findings)
+
+    if score >= 50:
+        level = "CRITICAL"
+    elif score >= 30:
+        level = "HIGH"
+    elif score >= 15:
+        level = "MEDIUM"
+    else:
+        level = "LOW"
+
+    return score, level
+
 
 CVE_DATABASE = {
     "OpenSSH": [

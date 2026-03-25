@@ -9,6 +9,7 @@ from app import create_app, db
 from app.models import Scan, Finding
 
 from scanner.engine import run_scan
+from scanner.checks import calculate_risk_score
 from reporting.pdf import build_pdf_report
 
 
@@ -40,6 +41,10 @@ def run_scan_task(
                 ssh_username=ssh_user or "",
                 ssh_password=ssh_pass or "",
             )
+
+            risk_score, risk_level = calculate_risk_score(results["findings"])
+            scan.risk_score = risk_score
+            scan.risk_level = risk_level
 
             # Remove any previous findings for this scan
             Finding.query.filter_by(scan_id=scan.id).delete()

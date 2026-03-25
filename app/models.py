@@ -19,6 +19,9 @@ class Scan(db.Model):
     finished_at = db.Column(db.DateTime, nullable=True)
 
     error = db.Column(db.Text, nullable=True)
+    risk_score = db.Column(db.Text, nullable=True)
+    risk_level = db.Column(db.String(20), nullable=True)
+
     celery_task_id = db.Column(db.String(128), nullable=True)
 
     # Auth-related metadata
