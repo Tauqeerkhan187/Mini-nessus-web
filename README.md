@@ -506,36 +506,24 @@ Planned or possible next steps:
 
 ## Screenshots
 
-Add your screenshots to the repo and update these paths.
-
 ### Dashboard
-
-```markdown
-<img width="1275" height="1506" alt="image" src="https://github.com/user-attachments/assets/6ca4ec05-0e7f-45e7-9a43-e3670bd5e38a" />
-
-```
+![Dashboard](<img width="1275" height="1506" alt="Screenshot 2026-03-25 083227" src="https://github.com/user-attachments/assets/97dfbf6b-e6cd-4027-81a1-c09f43166a38" />
+)
 
 ### New Scan
-
-```markdown
-<img width="1264" height="1299" alt="image" src="https://github.com/user-attachments/assets/0ee225ea-79f1-4df8-bae9-67417ec39693" />
-
-```
+![New Scan](<img width="1264" height="1299" alt="Screenshot 2026-03-25 083325" src="https://github.com/user-attachments/assets/2c1784a6-5899-47b5-9b0f-e2116c744566" />
+)
 
 ### Scan Detail
-
-```markdown
-<img width="1261" height="1416" alt="image" src="https://github.com/user-attachments/assets/5cbfb548-131a-438f-a55d-9e65f214971f" />
-
-```
+![Scan Detail](<img width="1261" height="1416" alt="Screenshot 2026-03-25 083429" src="https://github.com/user-attachments/assets/d6fb47d4-5a03-4944-acc1-74ac5b4bab9a" />
+)
 
 ### PDF Report
+![PDF Report Page 1](<img width="2550" height="3300" alt="fae2ce69-9a1b-4ddd-a553-d2e4ba8d83b1_scan_3_report-1" src="https://github.com/user-attachments/assets/d00db6d7-9255-4817-9ecf-2415e7ef6f59" />
+)
 
-
-```<img width="2550" height="3300" alt="fae2ce69-9a1b-4ddd-a553-d2e4ba8d83b1_scan_3_report-1" src="https://github.com/user-attachments/assets/e83f239f-f1ac-4069-89de-3887c075804d" />
-
-
----<img width="2550" height="3300" alt="fae2ce69-9a1b-4ddd-a553-d2e4ba8d83b1_scan_3_report-2" src="https://github.com/user-attachments/assets/97ba7d50-c3d8-43c5-b5ec-74cca31d4e2f" />
+![PDF Report Page 2](<img width="2550" height="3300" alt="fae2ce69-9a1b-4ddd-a553-d2e4ba8d83b1_scan_3_report-2" src="https://github.com/user-attachments/assets/e3fb8d59-f500-49c1-b7fa-c641d324c2e5" />
+)
 
 Skills Demonstrated
 
