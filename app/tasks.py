@@ -10,7 +10,7 @@ from app.models import Scan, Finding
 
 from scanner.engine import run_scan
 from reporting.pdf import build_pdf_report
-from scanner.scoring import calculate_risk_score
+from scanner.scoring import calculate_risk_score   # or calculate_scan_risk
 
 @celery.task(bind=True)
 def run_scan_task(
@@ -41,7 +41,7 @@ def run_scan_task(
                 ssh_password=ssh_pass or "",
             )
 
-            risk_score, risk_level = calculate_risk_score(vulns)
+            risk_score, risk_level = calculate_risk_score(results["findings"])
             scan.risk_score = risk_score
             scan.risk_level = risk_level
 
@@ -61,6 +61,10 @@ def run_scan_task(
                         severity=finding["severity"],
                         recommendation=finding["recommendation"],
                         cve=finding.get("cve"),
+                        cvss_score=finding.get("cvss_score", 0.0),
+                        cvss_vector=finding.get("cvss_vector"),
+                        impact=finding.get("impact"),
+                        rule_key=finding.get("rule_key"),
                     )
                 )
 

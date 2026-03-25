@@ -19,7 +19,7 @@ class Scan(db.Model):
     finished_at = db.Column(db.DateTime, nullable=True)
 
     error = db.Column(db.Text, nullable=True)
-    risk_score = db.Column(db.Text, nullable=True)
+    risk_score = db.Column(db.Float, nullable=True)
     risk_level = db.Column(db.String(20), nullable=True)
 
     celery_task_id = db.Column(db.String(128), nullable=True)
@@ -50,3 +50,8 @@ class Finding(db.Model):
     severity = db.Column(db.String(20), nullable=False)  # LOW/MEDIUM/HIGH/CRITICAL
     recommendation = db.Column(db.Text, nullable=False)
     cve = db.Column(db.String(100), nullable=True)
+
+    cvss_score = db.Column(db.Float, default=0.0)
+    cvss_vector = db.Column(db.String(255), nullable=True)
+    impact = db.Column(db.Text, nullable=True)
+    rule_key = db.Column(db.String(100), nullable=True)
