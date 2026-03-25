@@ -124,7 +124,7 @@ def build_pdf_report(scan, results: dict, out_path: str):
         sev_color = SEVERITY_COLORS.get(sev, HexColor("#6B7280"))
 
         sev_label_map = {
-                "CRITICAL": "Critical",
+                "CRITICAL": "CRITICAL",
                 "HIGH": "HIGH",
                 "MEDIUM": "MEDIUM",
                 "LOW": "LOW",
