@@ -191,7 +191,6 @@ def build_pdf_report(scan, results: dict, out_path: str):
     c.setFont("Helvetica-Oblique", 8)
     c.setFillColor(HexColor("#6B7280"))
     disclaimer_lines = [
-            disclaimer_lines = [
     "This scan was performed in a controlled lab environment on authorized targets only.",
     "Findings are based on banner analysis and version heuristics, not fully authenticated checks unless explicitly provided.",
     "False positives are possible. Verify findings manually before taking remediation action.",
