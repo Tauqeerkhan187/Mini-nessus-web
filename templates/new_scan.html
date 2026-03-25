@@ -1,82 +1,340 @@
+<!-- Author: TK -->                                                                    <!-- Date: 05-03-2026 -->
+<!-- Purpose: Scan page, enter host IP, port, scan type -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>New Vulnerability Scan</title>
     <style>
+        :root {
+            --bg: #f3f6fb;
+            --panel: #ffffff;
+            --border: #e5e7eb;
+            --text: #0f172a;
+            --muted: #64748b;
+            --navy: #0f172a;
+            --blue: #2563eb;
+            --blue-dark: #1d4ed8;
+            --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            --radius: 18px;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
-            margin: 30px;
-            background: #f5f7fa;
+            background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 220px);
+            color: var(--text);
+        }
+
+        .topbar {
+            background: var(--navy);
+            color: white;
+            padding: 18px 0;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+        }
+
+        .container {
+            width: min(900px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        .topbar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .brand p {
+            margin: 4px 0 0;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.2s ease;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text);
+        }
+
+        .button:hover {
+            background: #f8fafc;
+        }
+
+        .page {
+            padding: 30px 0 40px;
         }
 
         .card {
-            background: white;
-            padding: 25px;
-            max-width: 650px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
         }
 
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            margin-bottom: 18px;
-            box-sizing: border-box;
+        .card-head {
+            padding: 24px 24px 14px;
+            border-bottom: 1px solid var(--border);
         }
 
-        button {
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
+        .card-head h2 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .card-head p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .card-body {
+            padding: 24px;
         }
 
         .note {
-            background: #eef2ff;
-            border-left: 4px solid #2563eb;
-            padding: 12px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e3a8a;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 22px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .field {
             margin-bottom: 18px;
         }
 
-        a {
-            text-decoration: none;
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .help {
+            display: block;
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .profile-card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            background: #fff;
+        }
+
+        .profile-card input {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .profile-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .profile-desc {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-left: 24px;
+        }
+
+        .auth-box {
+            margin-top: 14px;
+            padding: 18px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .primary {
+            background: var(--blue);
+            color: white;
+        }
+
+        .primary:hover {
+            background: var(--blue-dark);
+        }
+
+        .ghost {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .ghost:hover {
+            background: #f8fafc;
+        }
+
+        @media (max-width: 760px) {
+            .grid,
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>Start New Vulnerability Scan</h2>
-
-        <div class="note">
-            <strong>Lab restriction:</strong> allowed CIDR is {{ allowed }}
+    <header class="topbar">
+        <div class="container topbar-inner">
+            <div class="brand">
+                <h1>Mini-Nessus Web</h1>
+                <p>Start a new vulnerability assessment</p>
+            </div>
+            <a class="button" href="/">Back to Dashboard</a>
         </div>
+    </header>
 
-        <form method="POST">
-            <label>Target IP</label>
-            <input type="text" name="target" placeholder="192.168.56.110" required>
+    <main class="container page">
+        <div class="card">
+            <div class="card-head">
+                <h2>Launch New Scan</h2>
+                <p>Run a quick check or a broader assessment against a lab target within the allowed range.</p>
+            </div>
 
-            <label>Ports (optional, comma separated)</label>
-            <input type="text" name="ports" placeholder="22,80,3306,6379">
+            <div class="card-body">
+                <div class="note">
+                    <strong>Lab restriction:</strong> allowed CIDR is {{ allowed }}
+                </div>
 
-            <label>Profile</label>
-            <select name="profile">
-                <option value="quick">Quick</option>
-                <option value="full">Full</option>
-            </select>
+                <form method="POST">
+                    <div class="grid">
+                        <div class="field">
+                            <label>Target IP</label>
+                            <input type="text" name="target" placeholder="192.168.56.110" required>
+                            <span class="help">Enter a single IP address inside the lab range.</span>
+                        </div>
 
-            <label>SSH Username (optional)</label>
-            <input type="text" name="ssh_user" placeholder="ubuntu">
+                        <div class="field">
+                            <label>Ports (optional)</label>
+                            <input type="text" name="ports" placeholder="22,80,3306,6379">
+                            <span class="help">Leave blank to use the selected profile defaults.</span>
+                        </div>
 
-            <label>SSH Password (optional)</label>
-            <input type="password" name="ssh_pass" placeholder="Enter SSH password">
+                        <div class="field full">
+                            <label>Scan Profile</label>
+                            <div class="profile-grid">
+                                <label class="profile-card">
+                                    <div>
+                                        <input type="radio" name="profile" value="quick" checked>
+                                        <span class="profile-title">Quick</span>
+                                    </div>
+                                    <div class="profile-desc">
+                                        Faster scan, smaller surface, useful for rapid checks and iteration.
+                                    </div>
+                                </label>
 
-            <button type="submit">Launch Scan</button>
-        </form>
+                                <label class="profile-card">
+                                    <div>
+                                        <input type="radio" name="profile" value="full">
+                                        <span class="profile-title">Full</span>
+                                    </div>
+                                    <div class="profile-desc">
+                                        Broader service coverage and better visibility into exposed attack surface.
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
 
-        <a href="/">← Back to Dashboard</a>
-    </div>
+                        <div class="field full">
+                            <div class="auth-box">
+                                <label>SSH Username (optional)</label>
+                                <input type="text" name="ssh_user" placeholder="ubuntu">
+
+                                <label style="margin-top: 16px;">SSH Password (optional)</label>
+                                <input type="password" name="ssh_pass" placeholder="Enter SSH password">
+
+                                <span class="help">
+                                    Add credentials only when you want authenticated checks. Otherwise the scan will stay unauthenticated.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="primary">Launch Scan</button>
+                        <a href="/" class="button ghost">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

@@ -13,7 +13,7 @@ from reporting.pdf import build_pdf_report
 from scanner.scoring import calculate_scan_risk
 
 def normalize_severity(severity: str) -> str:
-    sev = (severity or "").strip.upper()
+    sev = (severity or "").strip().upper()
 
     mapping = {
             "CRITICAL": "CRITICAL",
