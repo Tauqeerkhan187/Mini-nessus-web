@@ -4,7 +4,7 @@
 
 import re
 from packaging import version as pkg_version
-
+from scoring import enrich_finding
 
 SEVERITY_SCORES = {
     "CRITICAL": 10,
