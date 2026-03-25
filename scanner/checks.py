@@ -211,6 +211,19 @@ def _version_is_affected(detected_version: str, max_affected: str) -> bool:
     except Exception:
         return False
 
+def _normalize_severity(severity: str) -> str:
+    sev = (severity or "").strip().upper()
+
+    mapping = {
+        "CRITICAL": "Critical",
+        "HIGH": "High",
+        "MEDIUM": "Medium",
+        "LOW": "Low",
+        "INFO": "Info",
+    }
+
+    return mapping.get(sev, "Low")
+
 
 def _make_finding(
     *,
