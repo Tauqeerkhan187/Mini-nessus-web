@@ -506,25 +506,29 @@ Planned or possible next steps:
 
 ## Screenshots
 
+The application includes a modern Flask-based dashboard for launching scans, reviewing findings, tracking severity trends, and exporting PDF reports.
+
 ### Dashboard
-![Dashboard](<img width="1275" height="1506" alt="Screenshot 2026-03-25 083227" src="https://github.com/user-attachments/assets/97dfbf6b-e6cd-4027-81a1-c09f43166a38" />
-)
+Shows the main overview with severity distribution, scan timeline, and scan history.
+
+![Dashboard](docs/dashboard.png)
 
 ### New Scan
-![New Scan](<img width="1264" height="1299" alt="Screenshot 2026-03-25 083325" src="https://github.com/user-attachments/assets/2c1784a6-5899-47b5-9b0f-e2116c744566" />
-)
+Launch a quick or full scan, with optional SSH credentials for authenticated checks.
+
+![New Scan](docs/new-scan.png)
 
 ### Scan Detail
-![Scan Detail](<img width="1261" height="1416" alt="Screenshot 2026-03-25 083429" src="https://github.com/user-attachments/assets/d6fb47d4-5a03-4944-acc1-74ac5b4bab9a" />
-)
+Displays scan-level risk, prioritized findings, CVSS-style scores, impact explanation, and remediation guidance.
+
+![Scan Detail](docs/scan-detail.png)
 
 ### PDF Report
-![PDF Report Page 1](<img width="2550" height="3300" alt="fae2ce69-9a1b-4ddd-a553-d2e4ba8d83b1_scan_3_report-1" src="https://github.com/user-attachments/assets/d00db6d7-9255-4817-9ecf-2415e7ef6f59" />
-)
+Exports a clean vulnerability assessment report with an executive summary and detailed findings.
 
-![PDF Report Page 2](<img width="2550" height="3300" alt="fae2ce69-9a1b-4ddd-a553-d2e4ba8d83b1_scan_3_report-2" src="https://github.com/user-attachments/assets/e3fb8d59-f500-49c1-b7fa-c641d324c2e5" />
-)
+![PDF Report - Page 1](docs/pdf-report-page-1.png)
 
+![PDF Report - Page 2](docs/pdf-report-page-2.png)
 Skills Demonstrated
 
 This project demonstrates practical work in:
