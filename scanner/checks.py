@@ -214,6 +214,7 @@ def _version_is_affected(detected_version: str, max_affected: str) -> bool:
 
 def _make_finding(
     *,
+    rule_key: str | None,
     port: int | None,
     service: str | None,
     banner: str | None,
@@ -223,7 +224,7 @@ def _make_finding(
     recommendation: str,
     cve: str | None = None,
 ) -> dict:
-    return {
+    finding = {
         "port": port,
         "service": service,
         "banner": banner or "",
@@ -234,14 +235,31 @@ def _make_finding(
         "recommendation": recommendation,
     }
 
+    if rule_key:
+        finding["rule_key"] = rule_key
+        finding = enrich_finding(rule_key, finding)
+
+    return finding
+
 
 def _apply_baseline_rule(service: str, port: int, banner: str, version: str) -> list[dict]:
     rule = BASELINE_RULES.get(service)
     if not rule:
         return []
 
+    baseline_rule_keys = {
+        "ssh": "ssh_weak_config",
+        "http": "http_no_tls",
+        "ftp": "ftp_exposed",
+        "telnet": "telnet_exposed",
+        "mysql": "mysql_exposed",
+        "postgres": "postgres_exposed",
+        "redis": "redis_exposed",
+    }
+
     return [
         _make_finding(
+            rule_key=baseline_rule_keys.get(service),
             port=port,
             service=service,
             banner=banner,
@@ -255,7 +273,18 @@ def _apply_baseline_rule(service: str, port: int, banner: str, version: str) -> 
 
 
 def _apply_cve_rules(service: str, port: int, banner: str, version: str) -> list[dict]:
+    cve_rule_keys = {
+        "OpenSSH": "ssh_known_cve",
+        "Apache": "http_known_cve",
+        "nginx": "http_known_cve",
+        "vsFTPd": "ftp_known_cve",
+        "ProFTPD": "ftp_known_cve",
+        "Redis": "redis_exposed",
+        "MySQL": "mysql_exposed",
+    }
+
     findings = []
+
 
     vendor_name, numeric_version = _match_vendor(version)
     if not vendor_name or not numeric_version:
@@ -269,6 +298,7 @@ def _apply_cve_rules(service: str, port: int, banner: str, version: str) -> list
 
             findings.append(
                 _make_finding(
+                    rule_key=cve_rule_keys.get(vendor_name),
                     port=port,
                     service=service,
                     banner=banner,
