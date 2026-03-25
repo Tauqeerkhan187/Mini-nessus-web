@@ -41,7 +41,7 @@ def run_scan_task(
                 ssh_password=ssh_pass or "",
             )
 
-            risk_score, risk_level = calculate_risk_score(results["findings"])
+            risk_score, risk_level = calculate_scan_score(results["findings"])
             scan.risk_score = risk_score
             scan.risk_level = risk_level
 
