@@ -1,266 +1,569 @@
+````markdown
+# Mini-Nessus Web
 
-# 🛡️ Mini Nessus Web Scanner
+Mini-Nessus Web is a lightweight **web-based vulnerability scanner** built with **Flask**, **SQLite**, **SQLAlchemy**, **Celery**, and a custom Python scanning engine.
 
-A lightweight, web-based vulnerability scanner inspired by tools like Nessus and Nmap.
-Built to identify exposed services, detect common security misconfigurations, and generate actionable reports.
+It was built as a practical cybersecurity portfolio project to demonstrate:
 
----
+- network reconnaissance
+- service fingerprinting
+- rule-based vulnerability detection
+- CVSS-style risk scoring
+- asynchronous scan execution
+- PDF reporting
+- clean web dashboard design
 
-## 🚀 Overview
-
-Mini Nessus is a Python-based vulnerability scanner with a web interface that allows users to:
-
-* Scan a target host for open ports
-* Identify running services (SSH, HTTP, FTP, MySQL, Redis, etc.)
-* Detect security issues and misconfigurations
-* Assign severity levels to findings
-* Generate structured PDF reports
-* View results in a clean dashboard
-
-This project demonstrates core cybersecurity concepts including **reconnaissance, service enumeration, vulnerability mapping, and risk assessment**.
+The project is inspired by the workflow of tools like Nessus, but intentionally keeps the architecture simple, readable, and easy to extend.
 
 ---
 
-## ⚙️ Features
+## Features
 
-### 🔍 Scanning Engine
-
-* TCP port scanning (custom, quick, and full profiles)
-* Banner grabbing for service identification
-* Port-based fallback detection for silent services (e.g., MySQL, Redis)
-
-### 🧠 Vulnerability Detection
-
-* Rule-based vulnerability mapping
-* Detection examples:
-
-  * Open SSH service
-  * Weak SSH configurations
-  * FTP exposure (plaintext protocol)
-  * Redis exposure (no authentication)
-  * MySQL exposure
-  * Missing firewall rules
-  * Pending security updates
-
-### 📊 Risk Classification
-
-* Severity levels:
-
-  * **CRITICAL**
-  * **HIGH**
-  * **MEDIUM**
-  * **LOW**
-  * **INFO**
-
-### 📄 Reporting
-
-* Auto-generated PDF reports
-* Executive summary with severity breakdown
-* Detailed findings with recommendations
-
-### 🌐 Web Dashboard
-
-* Scan management interface
-* Detailed findings table
-* Downloadable reports
-* Clean UI built with Flask templates
+- Web dashboard for launching and reviewing scans
+- Asynchronous background scans with Celery
+- Custom threaded TCP port scanner
+- Service detection using banners and default port logic
+- Supported service detection:
+  - SSH
+  - HTTP
+  - FTP
+  - MySQL
+  - PostgreSQL
+  - Redis
+  - Telnet
+  - SMTP
+- Rule-based vulnerability checks
+- Local CVE/version matching for selected services
+- CVSS-style per-finding scoring
+- Scan-level risk aggregation
+- Authenticated SSH checks with Paramiko
+- Quick and Full scan profiles
+- PDF report generation with ReportLab
+- Severity distribution and scan timeline charts
+- SQLite persistence through SQLAlchemy
+- Lab-only safety restriction using allowed CIDR validation
 
 ---
 
-## 🧱 Architecture
+## Why I Built This
 
-```
-User (Browser)
-     ↓
-Flask Web App
-     ↓
-Scan Engine (Python)
-     ↓
-Service Detection
-     ↓
-Vulnerability Rules Engine
-     ↓
-Database (SQLite)
-     ↓
-Dashboard + PDF Report
-```
+A lot of student security projects stop at “it scans ports.”
+
+I wanted this one to go further and behave more like a real product:
+
+1. launch a scan from a web app  
+2. detect exposed services  
+3. generate findings based on real rules  
+4. prioritize them with realistic scoring  
+5. store everything in a database  
+6. present results in a usable dashboard  
+7. export a professional PDF report  
+
+This project helped me combine **offensive security concepts** with **backend engineering**, **risk prioritization**, and **reporting**.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-* **Backend:** Python, Flask
-* **Database:** SQLite (SQLAlchemy ORM)
-* **Scanning:** Custom socket-based engine
-* **Frontend:** HTML, CSS (Jinja templates)
-* **Reporting:** PDF generation (ReportLab / similar)
+### Backend
+- Flask
+- Flask-SQLAlchemy
+- SQLite
+- Celery
+- Redis
 
----
+### Scanning / Security Logic
+- Custom Python port scanner
+- Banner grabbing and service fingerprinting
+- Rule-based vulnerability checks
+- CVSS-style scoring
+- Paramiko for authenticated SSH checks
 
-## 📂 Project Structure
-
-```
-mini_nessus_web/
-│
-├── app/
-│   ├── routes.py          # Flask routes
-│   ├── models.py          # Database models
-│   ├── tasks.py           # Scan execution logic
-│
-├── scanner/
-│   ├── engine.py          # Port scanning + detection
-│   ├── vulns.py           # Vulnerability rules
-│
-├── templates/             # HTML templates
-├── static/                # CSS / assets
-├── reports/               # Generated PDFs
-├── instance/              # Database files
-│
-├── main.py                 # App entry point
-├── requirements.txt
-└── README.md
-```
+### Reporting / Frontend
+- ReportLab
+- Jinja2 templates
+- Chart.js
+- Custom CSS
 
 ---
 
-## ⚡ Installation
-
-### 1. Clone the repository
+## Project Structure
 
 ```bash
-git clone https://github.com/yourusername/mini-nessus-web.git
+Mini-nessus-web-main/
+├── .gitignore
+├── README.md
+├── requirements.txt
+├── main.py
+│
+├── app/
+│   ├── .gitignore
+│   ├── __init__.py
+│   ├── celery_app.py
+│   ├── models.py
+│   ├── routes.py
+│   └── tasks.py
+│
+├── scanner/
+│   ├── banners.py
+│   ├── checks.py
+│   ├── engine.py
+│   ├── portscan.py
+│   ├── scoring.py
+│   └── ssh_checks.py
+│
+├── reporting/
+│   └── pdf.py
+│
+├── static/
+│   └── style.css
+│
+└── templates/
+    ├── base.html
+    ├── index.html
+    ├── new_scan.html
+    └── scan.html
+````
+
+---
+
+## Architecture
+
+The project follows a clean flow:
+
+* **`scanner/portscan.py`**
+  threaded TCP port discovery
+
+* **`scanner/banners.py`**
+  banner grabbing, service guessing, version extraction
+
+* **`scanner/checks.py`**
+  baseline exposure rules and local CVE/version matching
+
+* **`scanner/scoring.py`**
+  CVSS-style enrichment and scan risk aggregation
+
+* **`scanner/ssh_checks.py`**
+  authenticated SSH checks using provided credentials
+
+* **`scanner/engine.py`**
+  orchestrates the full scan pipeline
+
+* **`app/tasks.py`**
+  runs scans asynchronously with Celery, stores findings, generates PDF
+
+* **`app/routes.py`**
+  dashboard, scan creation, scan view, PDF download, dashboard API
+
+* **`reporting/pdf.py`**
+  builds the final PDF assessment report
+
+This keeps the scanning logic, scoring, storage, and UI responsibilities separate instead of turning the app into one giant mess.
+
+---
+
+## How It Works
+
+1. A user launches a scan from the dashboard
+2. Flask creates a `Scan` record in SQLite
+3. Celery picks up the background job
+4. The scanning engine validates the target against the allowed CIDR
+5. The port scanner identifies open ports
+6. Banner grabbing and service detection identify likely services
+7. Rule-based checks generate findings
+8. CVSS-style scoring enriches findings and calculates scan-level risk
+9. Results are stored in the database
+10. A PDF report is generated
+11. The dashboard displays the findings and trends
+
+---
+
+## Current Detection / Finding Logic
+
+### Baseline exposure checks
+
+The scanner currently raises findings for risky exposed services such as:
+
+* Telnet exposed
+* FTP exposed
+* MySQL exposed
+* PostgreSQL exposed
+* Redis exposed
+* SSH exposed
+* HTTP exposed
+
+### Version / CVE matching
+
+The local CVE matching logic currently includes selected checks for:
+
+* OpenSSH
+* Apache HTTP Server
+* nginx
+* vsFTPd
+* ProFTPD
+* Redis
+* MySQL
+
+### Authenticated SSH checks
+
+When valid SSH credentials are supplied, the scanner can perform additional checks such as:
+
+* password authentication enabled
+* root login allowed
+* X11 forwarding enabled
+* empty passwords allowed
+* Protocol 1 enabled
+* missing or weak firewall configuration
+* pending security updates
+* risky filesystem permissions
+* UID 0 users besides root
+
+---
+
+## Risk Scoring
+
+This project originally used a simple weighted severity approach and was later upgraded to a **CVSS-style scoring model**.
+
+Each finding can store:
+
+* severity
+* CVSS-style score
+* CVSS vector
+* impact explanation
+* recommendation
+* optional CVE
+* rule key
+
+Each scan stores:
+
+* `risk_score`
+* `risk_level`
+
+This makes the output much more useful than raw severity labels alone.
+
+---
+
+## Frontend
+
+The web interface includes:
+
+* modern dashboard layout
+* scan history table
+* severity distribution chart
+* scan timeline chart
+* new scan form
+* scan detail page
+* PDF download button
+
+The frontend is built with Flask templates, shared base layout, Chart.js, and a custom stylesheet.
+
+---
+
+## PDF Reporting
+
+Each completed scan generates a PDF report that includes:
+
+* target information
+* scan metadata
+* risk score and risk level
+* executive summary
+* ports scanned / open ports
+* finding counts by severity
+* detailed findings
+* recommendations
+* disclaimer section
+
+---
+
+## Data Models
+
+### `Scan`
+
+Stores high-level scan metadata:
+
+* target
+* port selection
+* profile
+* status
+* timestamps
+* error info
+* risk score / risk level
+* Celery task ID
+* SSH auth metadata
+
+### `Finding`
+
+Stores finding-level data:
+
+* port
+* service
+* banner
+* version
+* issue
+* severity
+* recommendation
+* CVE
+* CVSS score
+* CVSS vector
+* impact
+* rule key
+
+---
+
+## Requirements
+
+From `requirements.txt`:
+
+* Flask
+* Flask-SQLAlchemy
+* Celery
+* redis
+* reportlab
+* python-dotenv
+* packaging
+* paramiko
+
+---
+
+## Setup
+
+## 1) Clone the repository
+
+```bash
+git clone https://github.com/TauqeerKhan187/mini-nessus-web.git
 cd mini-nessus-web
 ```
 
-### 2. Create virtual environment
+## 2) Create and activate a virtual environment
+
+### Linux / macOS
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-### 3. Install dependencies
+### Windows
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+## 3) Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Run the application
+## 4) Start Redis
+
+Celery uses Redis as both broker and result backend.
+
+### Linux
+
+```bash
+redis-server
+```
+
+Make sure Redis is running on:
+
+```bash
+redis://localhost:6379/0
+```
+
+## 5) Configure environment variables
+
+Create a `.env` file in the project root:
+
+```env
+FLASK_SECRET=dev
+REDIS_URL=redis://localhost:6379/0
+ALLOWED_CIDR=192.168.56.0/24
+HOST=0.0.0.0
+PORT=5000
+```
+
+### Important
+
+`ALLOWED_CIDR` is used as a **lab safety restriction**.
+Targets outside this network will be rejected.
+
+## 6) Start the Flask app
 
 ```bash
 python main.py
 ```
 
-### 5. Open in browser
+## 7) Start the Celery worker
 
-```
-http://127.0.0.1:5000
-```
-
----
-
-## 🧪 Example Scan
+Open another terminal in the same project directory and run:
 
 ```bash
-Target: 192.168.56.110
-Open Ports:
-- 22 (SSH)
-- 80 (HTTP)
-- 3306 (MySQL)
-- 6379 (Redis)
+celery -A app.celery_app.celery worker --loglevel=info
 ```
 
-### Example Findings:
+---
 
-* 🔴 Redis exposed to network
-* 🔴 SSH vulnerable (CVE-2024-6387)
-* 🟠 MySQL exposed
-* 🟡 SSH password authentication enabled
+## Usage
+
+1. Open the dashboard in your browser
+2. Click **New Scan**
+3. Enter:
+
+   * target IP
+   * optional custom ports
+   * scan profile (`quick` or `full`)
+   * optional SSH username/password
+4. Launch the scan
+5. Wait for the background task to finish
+6. Open the scan detail page
+7. Review findings, CVSS-style scores, and recommendations
+8. Download the PDF report
 
 ---
 
-## 📌 How It Works
+## Scan Profiles
 
-1. **Port Scan**
-   Uses TCP socket connections to identify open ports.
+### Quick
 
-2. **Service Detection**
+Targets a smaller common port list for faster feedback.
 
-   * Banner grabbing (if available)
-   * Port-based fallback (for silent services like Redis/MySQL)
+### Full
 
-3. **Vulnerability Mapping**
-   Matches detected services against predefined rules.
-
-4. **Severity Assignment**
-   Each issue is classified based on impact.
-
-5. **Report Generation**
-   Results are stored and exported into a structured PDF.
+Scans ports `1-1024` plus several additional commonly exposed service ports.
 
 ---
 
-## ⚠️ Limitations
+## Security / Safety Note
 
-* Not a replacement for enterprise tools like Nessus
-* No authenticated scanning (yet)
-* Limited CVE database (rule-based only)
-* No UDP scanning
+This project is intentionally restricted to **lab environments**.
 
----
+The scanner validates the target IP against `ALLOWED_CIDR` before scanning.
+That means it will refuse to scan anything outside the permitted network range.
 
-## 🧭 Future Improvements
+This tool is for:
 
-* ✅ Risk scoring system (CVSS-style)
-* 📊 Dashboard charts (severity distribution)
-* 🔐 Credentialed scanning (SSH-based checks)
-* 🌍 Multi-target scanning
-* ⚡ Async scanning for performance
-* 🧠 CVE API integration
+* educational use
+* local labs
+* authorized internal testing only
+
+Do **not** use it against systems you do not own or have explicit permission to assess.
 
 ---
 
-## 🎯 Learning Outcomes
+## What I Improved During Development
 
-This project demonstrates:
+Key upgrades made during development include:
 
-* Network scanning fundamentals
-* Service enumeration techniques
-* Vulnerability assessment logic
-* Secure coding practices
-* Web app integration with security tooling
-
----
-
-## 📸 Screenshots
-
-> Add screenshots of:
-
-* Dashboard
-* Scan results
-* PDF report
+* fixing MySQL and Redis detection
+* improving quick / full port profile behavior
+* replacing simple weighted scoring with CVSS-style scoring
+* adding per-finding impact explanations
+* adding scan-level risk aggregation
+* storing CVSS fields in the database
+* improving PDF layout and clarity
+* redesigning the frontend into a cleaner dashboard
+* moving repeated template styles into shared layout + stylesheet
+* adding dashboard charts for severity and scan history
 
 ---
 
-## 📜 License
+## Limitations
 
-MIT License
+This is still a lightweight scanner, not a full commercial vulnerability management platform.
+
+Current limitations include:
+
+* banner/version-based checks can produce false positives
+* no deep authenticated Linux audit beyond SSH checks
+* no plugin marketplace or dynamic plugins
+* no user authentication or multi-user support
+* no scheduling or recurring scan system
+* no asset grouping or tagging
+* no REST API auth layer
+* SQLite is fine for local use, but not ideal for large-scale deployment
 
 ---
 
-## 🤝 Contributing
+## Future Improvements
 
-Pull requests are welcome. For major changes, open an issue first.
+Planned or possible next steps:
+
+* Top 3 Risks section in the PDF
+* richer CVE coverage
+* better authenticated checks
+* JSON / CSV export
+* asset inventory support
+* scan scheduling
+* multi-target support
+* PostgreSQL deployment version
+* login / user roles
+* filtering and sorting in the UI
+* remediation tracking
 
 ---
 
-## 👤 Author
+## Screenshots
+
+Add your screenshots to the repo and update these paths.
+
+### Dashboard
+
+```markdown
+<img width="1275" height="1506" alt="image" src="https://github.com/user-attachments/assets/6ca4ec05-0e7f-45e7-9a43-e3670bd5e38a" />
+
+```
+
+### New Scan
+
+```markdown
+<img width="1264" height="1299" alt="image" src="https://github.com/user-attachments/assets/0ee225ea-79f1-4df8-bae9-67417ec39693" />
+
+```
+
+### Scan Detail
+
+```markdown
+<img width="1261" height="1416" alt="image" src="https://github.com/user-attachments/assets/5cbfb548-131a-438f-a55d-9e65f214971f" />
+
+```
+
+### PDF Report
+
+```markdown
+
+```<img width="2550" height="3300" alt="fae2ce69-9a1b-4ddd-a553-d2e4ba8d83b1_scan_3_report-1" src="https://github.com/user-attachments/assets/e83f239f-f1ac-4069-89de-3887c075804d" />
+
+
+---<img width="2550" height="3300" alt="fae2ce69-9a1b-4ddd-a553-d2e4ba8d83b1_scan_3_report-2" src="https://github.com/user-attachments/assets/97ba7d50-c3d8-43c5-b5ec-74cca31d4e2f" />
+
+
+## Skills Demonstrated
+
+This project demonstrates practical work in:
+
+* Python
+* Flask
+* SQLAlchemy
+* SQLite
+* Celery
+* Redis
+* Paramiko
+* asynchronous task orchestration
+* port scanning
+* service fingerprinting
+* vulnerability detection logic
+* risk scoring
+* PDF generation
+* web dashboard design
+* project architecture
+
+---
+
+## Author
 
 **TK**
-Cybersecurity Student | Aspiring Security Engineer
+Cybersecurity student building practical security tools and portfolio-grade projects.
 
----
-
-## ⭐ Final Note
-
-This project was built to bridge the gap between **theory and practical security tooling**, showcasing how vulnerability scanners work under the hood.
+```
