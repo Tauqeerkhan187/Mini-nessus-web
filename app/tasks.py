@@ -12,6 +12,19 @@ from scanner.engine import run_scan
 from reporting.pdf import build_pdf_report
 from scanner.scoring import calculate_scan_risk
 
+def normalize_severity(severity: str) -> str:
+    sev = (severity or "").strip.upper()
+
+    mapping = {
+            "CRITICAL": "CRITICAL",
+            "HIGH": "HIGH",
+            "MEDIUM": "MEDIUM",
+            "LOW": "LOW",
+            "INFO": "INFO",
+        }
+
+        return mapping.get(sev, "LOW")
+
 @celery.task(bind=True)
 def run_scan_task(
     self,
@@ -58,7 +71,7 @@ def run_scan_task(
                         banner=finding.get("banner"),
                         version=finding.get("version"),
                         issue=finding["issue"],
-                        severity=finding["severity"],
+                        severity=normalize_severity(finding["severity"]),
                         recommendation=finding["recommendation"],
                         cve=finding.get("cve"),
                         cvss_score=finding.get("cvss_score", 0.0),
