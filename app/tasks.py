@@ -22,8 +22,8 @@ def normalize_severity(severity: str) -> str:
             "LOW": "LOW",
             "INFO": "INFO",
         }
-
-        return mapping.get(sev, "LOW")
+    
+    return mapping.get(sev, "LOW")
 
 @celery.task(bind=True)
 def run_scan_task(
