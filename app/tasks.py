@@ -10,7 +10,7 @@ from app.models import Scan, Finding
 
 from scanner.engine import run_scan
 from reporting.pdf import build_pdf_report
-from scanner.scoring import calculate_risk_score   # or calculate_scan_risk
+from scanner.scoring import calculate_scan_risk
 
 @celery.task(bind=True)
 def run_scan_task(
