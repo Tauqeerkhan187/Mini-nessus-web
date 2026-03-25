@@ -1,4 +1,4 @@
-````markdown
+
 # Mini-Nessus Web
 
 Mini-Nessus Web is a lightweight **web-based vulnerability scanner** built with **Flask**, **SQLite**, **SQLAlchemy**, **Celery**, and a custom Python scanning engine.
@@ -531,15 +531,13 @@ Add your screenshots to the repo and update these paths.
 
 ### PDF Report
 
-```markdown
 
 ```<img width="2550" height="3300" alt="fae2ce69-9a1b-4ddd-a553-d2e4ba8d83b1_scan_3_report-1" src="https://github.com/user-attachments/assets/e83f239f-f1ac-4069-89de-3887c075804d" />
 
 
 ---<img width="2550" height="3300" alt="fae2ce69-9a1b-4ddd-a553-d2e4ba8d83b1_scan_3_report-2" src="https://github.com/user-attachments/assets/97ba7d50-c3d8-43c5-b5ec-74cca31d4e2f" />
 
-
-## Skills Demonstrated
+Skills Demonstrated
 
 This project demonstrates practical work in:
 
