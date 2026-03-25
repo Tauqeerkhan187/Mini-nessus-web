@@ -120,7 +120,7 @@ def build_pdf_report(scan, results: dict, out_path: str):
             c.showPage()
             y = h - 1 * inch
 
-        sev = f.get("severity") or "LOW").strip().upper()
+        sev = (f.get("severity") or "LOW").strip().upper()
         sev_color = SEVERITY_COLORS.get(sev, HexColor("#6B7280"))
 
         sev_label_map = {
