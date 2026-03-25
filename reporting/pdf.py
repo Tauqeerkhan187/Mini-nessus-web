@@ -41,6 +41,10 @@ def build_pdf_report(scan, results: dict, out_path: str):
     y -= 0.22 * inch
     c.drawString(margin, y, f"Started: {scan.started_at or 'N/A'}  Completed: {scan.finished_at or 'N/A'}")
 
+    c.drawString(margin, y, f"Risk Score: {scan.risk_score or 0}")
+    y -= 0.2 * inch
+    c.drawString(margin, y, f"Risk Level: {scan.risk_level or 'LOW'}")
+
     # Executive Summary
     y -= 0.5 * inch
     c.setFont("Helvetica-Bold", 14)
@@ -187,12 +191,12 @@ def build_pdf_report(scan, results: dict, out_path: str):
     c.setFont("Helvetica-Oblique", 8)
     c.setFillColor(HexColor("#6B7280"))
     disclaimer_lines = [
-            "This scan was performed in controlled lab environment on authorized targets only."
-            "Findings are based on banner analysis and version heuristics, not authenticated checks."
-            "False positives are possible. Verify findings manually before taking remediation action."
-            "This tool is for educational and authorized testing purposes only."
-
-    ]
+            disclaimer_lines = [
+    "This scan was performed in a controlled lab environment on authorized targets only.",
+    "Findings are based on banner analysis and version heuristics, not fully authenticated checks unless explicitly provided.",
+    "False positives are possible. Verify findings manually before taking remediation action.",
+    "This tool is for educational and authorized testing purposes only.",
+]
 
     for line in disclaimer_lines:
         c.drawString(margin, y, line)
