@@ -1,17 +1,35 @@
 # Python
-.venv/
 __pycache__/
 *.py[cod]
+*.pyo
 
-# App data/runtime
-instance/
-*.log
-celerybeat-schedule
-celerybeat.pid
+# Virtual environments
+venv/
+.venv/
+env/
 
-# Secrets
+# Environment files
 .env
 
-# OS / editor
-.vscode/
+# Flask / instance data
+instance/
+*.db
+*.sqlite3
+
+# OS junk
 .DS_Store
+Thumbs.db
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Test/cache
+.pytest_cache/
+.mypy_cache/
+
+# Logs
+*.log
+
+# Generated reports
+*.pdf
